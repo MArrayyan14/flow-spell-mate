@@ -16,6 +16,7 @@ import Vocabulary from "./pages/Vocabulary";
 
 const queryClient = new QueryClient();
 
+
 const AppContent = () => {
   const init = useAuthStore((s) => s.init);
   useEffect(() => { init(); }, [init]);
