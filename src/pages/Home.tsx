@@ -1,24 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Lock } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { PageTopBar, LoadingGrid, ErrorState } from "@/components/lingua/AppShell";
 import { StrengthBar } from "@/components/lingua/StrengthBar";
-import { enrichConcepts, unitStrength, type Concept, type Memory, type Unit } from "@/lib/lingua";
+import { enrichConcepts, unitStrength, type Unit } from "@/lib/lingua";
 import { useAuthStore } from "@/stores/authStore";
+import { useLessons } from "@/hooks/useLessons";
 
 export default function Home() {
   const { user, profile } = useAuthStore();
   const navigate = useNavigate();
-  const query = useQuery({ queryKey: ["home", user?.id], enabled: !!user, queryFn: async () => {
-    const [units, concepts, memory] = await Promise.all([
-      supabase.from("units").select("*").order("order_index"),
-      supabase.from("concepts").select("*"),
-      supabase.from("user_memory").select("*").eq("user_id", user!.id),
-    ]);
-    if (units.error || concepts.error || memory.error) throw new Error("load");
-    return { units: units.data as Unit[], concepts: concepts.data as Concept[], memories: memory.data as Memory[] };
-  }});
+  const query = useLessons(user?.id);
   if (query.isLoading) return <main className="lif-page"><div className="lif-shell"><PageTopBar /><LoadingGrid /></div></main>;
   if (query.isError || !query.data) return <main className="lif-page"><div className="lif-shell"><ErrorState onRetry={() => query.refetch()} /></div></main>;
   const enriched = enrichConcepts(query.data.concepts, query.data.memories);

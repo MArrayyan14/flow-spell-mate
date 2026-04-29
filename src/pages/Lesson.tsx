@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { X, Volume2, Mic } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { enrichConcepts, isCloseEnough, speakSpanish, updateMemory, type Concept, type ConceptWithMemory, type Memory } from "@/lib/lingua";
+import { enrichConcepts, isCloseEnough, speakSpanish, updateMemory, type ConceptWithMemory } from "@/lib/lingua";
 import { useAuthStore } from "@/stores/authStore";
 import { useLessonStore, type Exercise } from "@/stores/lessonStore";
+import { useLesson } from "@/hooks/useLessons";
 
 export default function Lesson() {
   const { id } = useParams();
@@ -21,14 +22,10 @@ export default function Lesson() {
   const [flipped, setFlipped] = useState(false);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [complete, setComplete] = useState(false);
-  const query = useQuery({ queryKey: ["lesson", id, user?.id, mode], enabled: !!user && !!id, queryFn: async () => {
-    const [concepts, memory] = await Promise.all([supabase.from("concepts").select("*").eq("unit_id", Number(id)), supabase.from("user_memory").select("*").eq("user_id", user!.id)]);
-    if (concepts.error || memory.error) throw new Error("load");
-    return enrichConcepts(concepts.data as Concept[], memory.data as Memory[]);
-  }});
-  useEffect(() => { if (query.data && profile) store.setLesson(makeExercises(query.data, mode), profile.hearts, mode); }, [query.data, profile?.hearts, mode]);
+  const query = useLesson(id, user?.id);
+  useEffect(() => { if (query.data?.concepts && profile) store.setLesson(makeExercises(query.data.concepts, mode), profile.hearts, mode); }, [query.data?.concepts, profile?.hearts, mode]);
   const exercise = store.exercises[store.currentIndex];
-  const options = useMemo(() => exercise ? makeOptions(exercise.concept, query.data ?? []) : [], [exercise, query.data]);
+  const options = useMemo(() => exercise ? makeOptions(exercise.concept, query.data?.concepts ?? []) : [], [exercise, query.data?.concepts]);
   if (!user) return <Navigate to="/login" />;
   if (query.isLoading || !exercise && !complete) return <main className="lif-page grid place-items-center"><div className="lif-skeleton h-48 w-full max-w-xl" /></main>;
   const finishAnswer = async (isCorrect: boolean) => {
