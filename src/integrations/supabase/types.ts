@@ -14,7 +14,216 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      concepts: {
+        Row: {
+          base_weight: number
+          concept_id: string
+          difficulty_level: number
+          emoji: string | null
+          frequency: string
+          gender: string | null
+          mnemonic: string | null
+          part_of_speech: string
+          skill_affinity: string[] | null
+          surface_form: string
+          topic: string
+          translation: string
+          unit_id: number | null
+        }
+        Insert: {
+          base_weight: number
+          concept_id: string
+          difficulty_level: number
+          emoji?: string | null
+          frequency: string
+          gender?: string | null
+          mnemonic?: string | null
+          part_of_speech: string
+          skill_affinity?: string[] | null
+          surface_form: string
+          topic: string
+          translation: string
+          unit_id?: number | null
+        }
+        Update: {
+          base_weight?: number
+          concept_id?: string
+          difficulty_level?: number
+          emoji?: string | null
+          frequency?: string
+          gender?: string | null
+          mnemonic?: string | null
+          part_of_speech?: string
+          skill_affinity?: string[] | null
+          surface_form?: string
+          topic?: string
+          translation?: string
+          unit_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concepts_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          completed: boolean
+          created_at: string
+          id: string
+          session_type: string
+          unit_id: number | null
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          session_type: string
+          unit_id?: number | null
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          session_type?: string
+          unit_id?: number | null
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      units: {
+        Row: {
+          cefr_level: string
+          description: string
+          emoji: string | null
+          id: number
+          order_index: number
+          topic: string
+        }
+        Insert: {
+          cefr_level: string
+          description: string
+          emoji?: string | null
+          id: number
+          order_index: number
+          topic: string
+        }
+        Update: {
+          cefr_level?: string
+          description?: string
+          emoji?: string | null
+          id?: number
+          order_index?: number
+          topic?: string
+        }
+        Relationships: []
+      }
+      user_memory: {
+        Row: {
+          adaptive_weight: number
+          attempts: number
+          concept_id: string
+          correct: number
+          half_life_est: number
+          id: string
+          incorrect: number
+          last_practiced: string | null
+          recall_prob: number
+          user_id: string
+        }
+        Insert: {
+          adaptive_weight?: number
+          attempts?: number
+          concept_id: string
+          correct?: number
+          half_life_est?: number
+          id?: string
+          incorrect?: number
+          last_practiced?: string | null
+          recall_prob?: number
+          user_id: string
+        }
+        Update: {
+          adaptive_weight?: number
+          attempts?: number
+          concept_id?: string
+          correct?: number
+          half_life_est?: number
+          id?: string
+          incorrect?: number
+          last_practiced?: string | null
+          recall_prob?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_memory_concept_id_fkey"
+            columns: ["concept_id"]
+            isOneToOne: false
+            referencedRelation: "concepts"
+            referencedColumns: ["concept_id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          gems: number
+          hearts: number
+          id: string
+          last_practiced: string | null
+          last_streak_date: string | null
+          league: string
+          streak_days: number
+          weekly_xp: number
+          xp_total: number
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          gems?: number
+          hearts?: number
+          id: string
+          last_practiced?: string | null
+          last_streak_date?: string | null
+          league?: string
+          streak_days?: number
+          weekly_xp?: number
+          xp_total?: number
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          gems?: number
+          hearts?: number
+          id?: string
+          last_practiced?: string | null
+          last_streak_date?: string | null
+          league?: string
+          streak_days?: number
+          weekly_xp?: number
+          xp_total?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
