@@ -1,0 +1,14 @@
+[
+  {"concept_id":"es:hola","surface_form":"hola","translation":"hello","unit_id":2,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Greetings","part_of_speech":"interjection","emoji":"👋"},
+  {"concept_id":"es:agua","surface_form":"agua","translation":"water","unit_id":4,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Food","part_of_speech":"noun","emoji":"💧"},
+  {"concept_id":"es:manzana","surface_form":"manzana","translation":"apple","unit_id":4,"difficulty_level":1,"base_weight":3.4,"frequency":"high","topic":"Food","part_of_speech":"noun","emoji":"🍎","mnemonic":"Sounds like MAN-sana — imagine a man eating an apple"},
+  {"concept_id":"es:gracias","surface_form":"gracias","translation":"thank you","unit_id":2,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Greetings","part_of_speech":"interjection","emoji":"🙏"},
+  {"concept_id":"es:uno","surface_form":"uno","translation":"one","unit_id":3,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Numbers","part_of_speech":"numeral","emoji":"1️⃣"},
+  {"concept_id":"es:madre","surface_form":"madre","translation":"mother","unit_id":5,"difficulty_level":1,"base_weight":3.6,"frequency":"high","topic":"Family","part_of_speech":"noun","emoji":"👩"},
+  {"concept_id":"es:hoy","surface_form":"hoy","translation":"today","unit_id":6,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Time","part_of_speech":"adverb","emoji":"📅"},
+  {"concept_id":"es:ayuda","surface_form":"ayuda","translation":"help","unit_id":10,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Emergency","part_of_speech":"noun","emoji":"🆘"},
+  {"concept_id":"es:yo","surface_form":"yo","translation":"I","unit_id":1,"difficulty_level":1,"base_weight":3.7,"frequency":"high","topic":"Core","part_of_speech":"pronoun","emoji":"🙋"},
+  {"concept_id":"es:viaje","surface_form":"viaje","translation":"trip","unit_id":7,"difficulty_level":2,"base_weight":3.1,"frequency":"medium","topic":"Travel","part_of_speech":"noun","emoji":"✈️"},
+  {"concept_id":"es:precio","surface_form":"precio","translation":"price","unit_id":8,"difficulty_level":2,"base_weight":3.0,"frequency":"medium","topic":"Shopping","part_of_speech":"noun","emoji":"🏷️"},
+  {"concept_id":"es:trabajo","surface_form":"trabajo","translation":"work","unit_id":9,"difficulty_level":2,"base_weight":3.2,"frequency":"high","topic":"Work","part_of_speech":"noun","emoji":"💼"}
+]
