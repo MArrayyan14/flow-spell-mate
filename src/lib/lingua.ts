@@ -1,6 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import { computeAdaptiveWeight, computeHalfLife, computeRecallProb, getDaysUntilThreshold, getStatus } from "@/lib/hlr";
 
+const db = supabase as any;
+
 export type Unit = { id: number; topic: string; cefr_level: string; description: string; order_index: number; emoji: string | null };
 export type Concept = { concept_id: string; surface_form: string; translation: string; topic: string; part_of_speech: string; difficulty_level: number; frequency: string; base_weight: number; skill_affinity?: string[] | null; unit_id: number | null; mnemonic?: string | null; gender?: string | null; emoji?: string | null };
 export type Memory = { id?: string; user_id: string; concept_id: string; attempts: number; correct: number; incorrect: number; last_practiced: string | null; half_life_est: number; recall_prob: number; adaptive_weight: number };
@@ -19,21 +21,21 @@ export const fallbackConcepts: Concept[] = [
 ];
 
 export async function seedConceptsIfEmpty() {
-  const { count } = await supabase.from("concepts").select("concept_id", { count: "exact", head: true });
+  const { count } = await db.from("concepts").select("concept_id", { count: "exact", head: true });
   if ((count ?? 0) > 0) return;
   let concepts = fallbackConcepts;
   try {
     const res = await fetch("/spanish_concepts.json");
     if (res.ok) concepts = await res.json();
   } catch { concepts = fallbackConcepts; }
-  await supabase.from("concepts").upsert(concepts as never, { onConflict: "concept_id", ignoreDuplicates: true });
+  await db.from("concepts").upsert(concepts, { onConflict: "concept_id", ignoreDuplicates: true });
 }
 
 export async function ensureProfile(userId: string, email?: string) {
-  const { data } = await supabase.from("user_profiles").select("*").eq("id", userId).maybeSingle();
+  const { data } = await db.from("user_profiles").select("*").eq("id", userId).maybeSingle();
   if (data) return data as Profile;
   const display = email?.split("@")[0] ?? "Learner";
-  const { data: inserted, error } = await supabase.from("user_profiles").insert({ id: userId, display_name: display }).select("*").single();
+  const { data: inserted, error } = await db.from("user_profiles").insert({ id: userId, display_name: display }).select("*").single();
   if (error) throw error;
   return inserted as Profile;
 }
@@ -64,7 +66,7 @@ export async function updateMemory(concept: Concept, isCorrect: boolean, current
   const daysSince = currentMemory?.last_practiced ? (Date.now() - new Date(currentMemory.last_practiced).getTime()) / 86400000 : 0;
   const newAdaptiveWeight = computeAdaptiveWeight(concept.base_weight, newIncorrect, daysSince);
   const row = { user_id: userId, concept_id: concept.concept_id, attempts: newAttempts, correct: newCorrect, incorrect: newIncorrect, last_practiced: now.toISOString(), half_life_est: newHalfLife, recall_prob: newRecall, adaptive_weight: newAdaptiveWeight };
-  const { data, error } = await supabase.from("user_memory").upsert(row, { onConflict: "user_id,concept_id" }).select("*").single();
+  const { data, error } = await db.from("user_memory").upsert(row, { onConflict: "user_id,concept_id" }).select("*").single();
   if (error) throw error;
   return data as Memory;
 }
