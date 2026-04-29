@@ -1,14 +1,3371 @@
-[
-  {"concept_id":"es:hola","surface_form":"hola","translation":"hello","unit_id":2,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Greetings","part_of_speech":"interjection","emoji":"👋"},
-  {"concept_id":"es:agua","surface_form":"agua","translation":"water","unit_id":4,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Food","part_of_speech":"noun","emoji":"💧"},
-  {"concept_id":"es:manzana","surface_form":"manzana","translation":"apple","unit_id":4,"difficulty_level":1,"base_weight":3.4,"frequency":"high","topic":"Food","part_of_speech":"noun","emoji":"🍎","mnemonic":"Sounds like MAN-sana — imagine a man eating an apple"},
-  {"concept_id":"es:gracias","surface_form":"gracias","translation":"thank you","unit_id":2,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Greetings","part_of_speech":"interjection","emoji":"🙏"},
-  {"concept_id":"es:uno","surface_form":"uno","translation":"one","unit_id":3,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Numbers","part_of_speech":"numeral","emoji":"1️⃣"},
-  {"concept_id":"es:madre","surface_form":"madre","translation":"mother","unit_id":5,"difficulty_level":1,"base_weight":3.6,"frequency":"high","topic":"Family","part_of_speech":"noun","emoji":"👩"},
-  {"concept_id":"es:hoy","surface_form":"hoy","translation":"today","unit_id":6,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Time","part_of_speech":"adverb","emoji":"📅"},
-  {"concept_id":"es:ayuda","surface_form":"ayuda","translation":"help","unit_id":10,"difficulty_level":1,"base_weight":3.8,"frequency":"high","topic":"Emergency","part_of_speech":"noun","emoji":"🆘"},
-  {"concept_id":"es:yo","surface_form":"yo","translation":"I","unit_id":1,"difficulty_level":1,"base_weight":3.7,"frequency":"high","topic":"Core","part_of_speech":"pronoun","emoji":"🙋"},
-  {"concept_id":"es:viaje","surface_form":"viaje","translation":"trip","unit_id":7,"difficulty_level":2,"base_weight":3.1,"frequency":"medium","topic":"Travel","part_of_speech":"noun","emoji":"✈️"},
-  {"concept_id":"es:precio","surface_form":"precio","translation":"price","unit_id":8,"difficulty_level":2,"base_weight":3.0,"frequency":"medium","topic":"Shopping","part_of_speech":"noun","emoji":"🏷️"},
-  {"concept_id":"es:trabajo","surface_form":"trabajo","translation":"work","unit_id":9,"difficulty_level":2,"base_weight":3.2,"frequency":"high","topic":"Work","part_of_speech":"noun","emoji":"💼"}
-]
+{
+  "metadata": {
+    "language": "Spanish",
+    "target_speaker_language": "English",
+    "dataset_version": "1.0",
+    "total_concepts": 183,
+    "base_weight_formula": "base_weight = (0.5 * freq_score) + (0.3 * diff_score) + (0.2 * imp_score)",
+    "freq_score_map": {
+      "high": 5,
+      "medium": 3,
+      "low": 1
+    },
+    "difficulty_scale": "1 = trivially easy  →  5 = very hard for English speakers",
+    "importance_scale": "1 = optional/rare  →  5 = core survival word",
+    "adaptive_weight_formula": "adaptive_weight = base_weight * mistake_factor * forget_factor",
+    "mistake_factor_table": {
+      "0_recent_errors": 1,
+      "1_to_2_errors": 1.3,
+      "3_to_5_errors": 1.7,
+      "6_plus_errors": 2.2
+    },
+    "forget_factor_table": {
+      "practiced_today": 1,
+      "1_to_2_days_ago": 1.2,
+      "3_to_5_days_ago": 1.5,
+      "6_to_10_days_ago": 2,
+      "more_than_10_days_ago": 2.5
+    },
+    "hlr_seed_formula": "initial_adaptive_weight = base_weight * 1.0  (no interaction data yet)",
+    "cefr_map": {
+      "1": "A1",
+      "2": "A2",
+      "3": "B1",
+      "4": "B2+"
+    },
+    "topics": [
+      "Core",
+      "Greetings",
+      "Food",
+      "Travel",
+      "Family",
+      "Work",
+      "Numbers",
+      "Time",
+      "Shopping",
+      "Emergency"
+    ],
+    "units": [
+      {
+        "unit_id": 1,
+        "topic": "Core",
+        "cefr_level": "A1",
+        "description": "Pronouns, articles, core verbs, conjunctions"
+      },
+      {
+        "unit_id": 2,
+        "topic": "Greetings",
+        "cefr_level": "A1",
+        "description": "Basic social phrases and politeness"
+      },
+      {
+        "unit_id": 3,
+        "topic": "Numbers",
+        "cefr_level": "A1",
+        "description": "Cardinal and ordinal numbers"
+      },
+      {
+        "unit_id": 4,
+        "topic": "Food",
+        "cefr_level": "A1",
+        "description": "Common foods, drinks, eating verbs"
+      },
+      {
+        "unit_id": 5,
+        "topic": "Family",
+        "cefr_level": "A1",
+        "description": "Family relationships and household"
+      },
+      {
+        "unit_id": 6,
+        "topic": "Time",
+        "cefr_level": "A2",
+        "description": "Days, hours, temporal expressions"
+      },
+      {
+        "unit_id": 7,
+        "topic": "Travel",
+        "cefr_level": "A2",
+        "description": "Transport, directions, places"
+      },
+      {
+        "unit_id": 8,
+        "topic": "Shopping",
+        "cefr_level": "A2",
+        "description": "Prices, transactions, shops"
+      },
+      {
+        "unit_id": 9,
+        "topic": "Work",
+        "cefr_level": "B1",
+        "description": "Office, jobs, professional interaction"
+      },
+      {
+        "unit_id": 10,
+        "topic": "Emergency",
+        "cefr_level": "A2",
+        "description": "Safety, medical, urgent phrases"
+      }
+    ]
+  },
+  "concepts": [
+    {
+      "concept_id": "es:yo",
+      "surface_form": "yo",
+      "translation": "I (first person singular)",
+      "topic": "Core",
+      "part_of_speech": "pronoun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:tu",
+      "surface_form": "tú",
+      "translation": "you (informal singular)",
+      "topic": "Core",
+      "part_of_speech": "pronoun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:el_pron",
+      "surface_form": "él",
+      "translation": "he",
+      "topic": "Core",
+      "part_of_speech": "pronoun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:ella",
+      "surface_form": "ella",
+      "translation": "she",
+      "topic": "Core",
+      "part_of_speech": "pronoun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:nosotros",
+      "surface_form": "nosotros",
+      "translation": "we (masculine/mixed)",
+      "topic": "Core",
+      "part_of_speech": "pronoun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:ellos",
+      "surface_form": "ellos",
+      "translation": "they (masculine/mixed)",
+      "topic": "Core",
+      "part_of_speech": "pronoun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:ser",
+      "surface_form": "ser",
+      "translation": "to be (permanent)",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:estar",
+      "surface_form": "estar",
+      "translation": "to be (temporary)",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:tener",
+      "surface_form": "tener",
+      "translation": "to have",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:hacer",
+      "surface_form": "hacer",
+      "translation": "to do / to make",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:ir",
+      "surface_form": "ir",
+      "translation": "to go",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:venir",
+      "surface_form": "venir",
+      "translation": "to come",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:querer",
+      "surface_form": "querer",
+      "translation": "to want",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:poder",
+      "surface_form": "poder",
+      "translation": "to be able to / can",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:hablar",
+      "surface_form": "hablar",
+      "translation": "to speak",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:comer",
+      "surface_form": "comer",
+      "translation": "to eat",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:beber",
+      "surface_form": "beber",
+      "translation": "to drink",
+      "topic": "Core",
+      "part_of_speech": "verb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:el_art",
+      "surface_form": "el",
+      "translation": "the (masculine singular)",
+      "topic": "Core",
+      "part_of_speech": "article",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "reading_core",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:la_art",
+      "surface_form": "la",
+      "translation": "the (feminine singular)",
+      "topic": "Core",
+      "part_of_speech": "article",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "reading_core",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:un",
+      "surface_form": "un",
+      "translation": "a / an (masculine)",
+      "topic": "Core",
+      "part_of_speech": "article",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "reading_core",
+        "listening_friendly"
+      ],
+      "unit_id": 1
+    },
+    {
+      "concept_id": "es:hola",
+      "surface_form": "hola",
+      "translation": "hello",
+      "topic": "Greetings",
+      "part_of_speech": "interjection",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:adios",
+      "surface_form": "adiós",
+      "translation": "goodbye",
+      "topic": "Greetings",
+      "part_of_speech": "interjection",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:buenos_dias",
+      "surface_form": "buenos días",
+      "translation": "good morning",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:buenas_tardes",
+      "surface_form": "buenas tardes",
+      "translation": "good afternoon",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:buenas_noches",
+      "surface_form": "buenas noches",
+      "translation": "good night",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:por_favor",
+      "surface_form": "por favor",
+      "translation": "please",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:gracias",
+      "surface_form": "gracias",
+      "translation": "thank you",
+      "topic": "Greetings",
+      "part_of_speech": "interjection",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:de_nada",
+      "surface_form": "de nada",
+      "translation": "you're welcome",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:perdon",
+      "surface_form": "perdón",
+      "translation": "sorry / excuse me",
+      "topic": "Greetings",
+      "part_of_speech": "interjection",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:salud",
+      "surface_form": "salud",
+      "translation": "bless you / health",
+      "topic": "Greetings",
+      "part_of_speech": "interjection",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:como_estas",
+      "surface_form": "¿cómo estás?",
+      "translation": "how are you?",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:bien",
+      "surface_form": "bien",
+      "translation": "well / good",
+      "topic": "Greetings",
+      "part_of_speech": "adverb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:mal",
+      "surface_form": "mal",
+      "translation": "bad / poorly",
+      "topic": "Greetings",
+      "part_of_speech": "adverb",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:mas_o_menos",
+      "surface_form": "más o menos",
+      "translation": "more or less",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "speaking_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:mucho_gusto",
+      "surface_form": "mucho gusto",
+      "translation": "nice to meet you",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:hasta_luego",
+      "surface_form": "hasta luego",
+      "translation": "see you later",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:bienvenido",
+      "surface_form": "bienvenido",
+      "translation": "welcome",
+      "topic": "Greetings",
+      "part_of_speech": "interjection",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "speaking_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:que_tal",
+      "surface_form": "¿qué tal?",
+      "translation": "what's up?",
+      "topic": "Greetings",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 2
+    },
+    {
+      "concept_id": "es:uno",
+      "surface_form": "uno",
+      "translation": "one",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:dos",
+      "surface_form": "dos",
+      "translation": "two",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:tres",
+      "surface_form": "tres",
+      "translation": "three",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:cuatro",
+      "surface_form": "cuatro",
+      "translation": "four",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:cinco",
+      "surface_form": "cinco",
+      "translation": "five",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:seis",
+      "surface_form": "seis",
+      "translation": "six",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:siete",
+      "surface_form": "siete",
+      "translation": "seven",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:ocho",
+      "surface_form": "ocho",
+      "translation": "eight",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:nueve",
+      "surface_form": "nueve",
+      "translation": "nine",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:diez",
+      "surface_form": "diez",
+      "translation": "ten",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:veinte",
+      "surface_form": "veinte",
+      "translation": "twenty",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:cien",
+      "surface_form": "cien",
+      "translation": "one hundred",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:mil",
+      "surface_form": "mil",
+      "translation": "one thousand",
+      "topic": "Numbers",
+      "part_of_speech": "number",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "speaking_friendly"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:primero",
+      "surface_form": "primero",
+      "translation": "first",
+      "topic": "Numbers",
+      "part_of_speech": "adjective",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:segundo",
+      "surface_form": "segundo",
+      "translation": "second",
+      "topic": "Numbers",
+      "part_of_speech": "adjective",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 3
+    },
+    {
+      "concept_id": "es:manzana",
+      "surface_form": "manzana",
+      "translation": "apple",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:pan",
+      "surface_form": "pan",
+      "translation": "bread",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:agua",
+      "surface_form": "agua",
+      "translation": "water",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:leche",
+      "surface_form": "leche",
+      "translation": "milk",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:cafe",
+      "surface_form": "café",
+      "translation": "coffee",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:te",
+      "surface_form": "té",
+      "translation": "tea",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:arroz",
+      "surface_form": "arroz",
+      "translation": "rice",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:pollo",
+      "surface_form": "pollo",
+      "translation": "chicken",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:carne",
+      "surface_form": "carne",
+      "translation": "meat",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:pescado",
+      "surface_form": "pescado",
+      "translation": "fish",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:fruta",
+      "surface_form": "fruta",
+      "translation": "fruit",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:verdura",
+      "surface_form": "verdura",
+      "translation": "vegetable",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:hambre",
+      "surface_form": "hambre",
+      "translation": "hunger",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:sed",
+      "surface_form": "sed",
+      "translation": "thirst",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:desayuno",
+      "surface_form": "desayuno",
+      "translation": "breakfast",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:almuerzo",
+      "surface_form": "almuerzo",
+      "translation": "lunch",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:cena",
+      "surface_form": "cena",
+      "translation": "dinner",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:restaurante",
+      "surface_form": "restaurante",
+      "translation": "restaurant",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:cuenta",
+      "surface_form": "cuenta",
+      "translation": "bill (check)",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:cuchara",
+      "surface_form": "cuchara",
+      "translation": "spoon",
+      "topic": "Food",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 3,
+      "base_weight": 2.7,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 4
+    },
+    {
+      "concept_id": "es:madre",
+      "surface_form": "madre",
+      "translation": "mother",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:padre",
+      "surface_form": "padre",
+      "translation": "father",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:hermano",
+      "surface_form": "hermano",
+      "translation": "brother",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:hermana",
+      "surface_form": "hermana",
+      "translation": "sister",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:hijo",
+      "surface_form": "hijo",
+      "translation": "son",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:hija",
+      "surface_form": "hija",
+      "translation": "daughter",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:abuela",
+      "surface_form": "abuela",
+      "translation": "grandmother",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:abuelo",
+      "surface_form": "abuelo",
+      "translation": "grandfather",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:familia",
+      "surface_form": "familia",
+      "translation": "family",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:esposo",
+      "surface_form": "esposo",
+      "translation": "husband",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:esposa",
+      "surface_form": "esposa",
+      "translation": "wife",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 2,
+      "imp_score": 4,
+      "base_weight": 2.9,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:amigo",
+      "surface_form": "amigo",
+      "translation": "friend (male)",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:amiga",
+      "surface_form": "amiga",
+      "translation": "friend (female)",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:bebe",
+      "surface_form": "bebé",
+      "translation": "baby",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:persona",
+      "surface_form": "persona",
+      "translation": "person",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:nino",
+      "surface_form": "niño",
+      "translation": "child / boy",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:nina",
+      "surface_form": "niña",
+      "translation": "child / girl",
+      "topic": "Family",
+      "part_of_speech": "noun",
+      "difficulty_level": 1,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:vivo_con",
+      "surface_form": "vivo con",
+      "translation": "I live with",
+      "topic": "Family",
+      "part_of_speech": "phrase",
+      "difficulty_level": 1,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "speaking_friendly"
+      ],
+      "unit_id": 5
+    },
+    {
+      "concept_id": "es:hoy",
+      "surface_form": "hoy",
+      "translation": "today",
+      "topic": "Time",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:manana",
+      "surface_form": "mañana",
+      "translation": "tomorrow",
+      "topic": "Time",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:ayer",
+      "surface_form": "ayer",
+      "translation": "yesterday",
+      "topic": "Time",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:ahora",
+      "surface_form": "ahora",
+      "translation": "now",
+      "topic": "Time",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:despues",
+      "surface_form": "después",
+      "translation": "after / later",
+      "topic": "Time",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:antes",
+      "surface_form": "antes",
+      "translation": "before",
+      "topic": "Time",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:lunes",
+      "surface_form": "lunes",
+      "translation": "Monday",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:martes",
+      "surface_form": "martes",
+      "translation": "Tuesday",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:miercoles",
+      "surface_form": "miércoles",
+      "translation": "Wednesday",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:jueves",
+      "surface_form": "jueves",
+      "translation": "Thursday",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:viernes",
+      "surface_form": "viernes",
+      "translation": "Friday",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:sabado",
+      "surface_form": "sábado",
+      "translation": "Saturday",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:domingo",
+      "surface_form": "domingo",
+      "translation": "Sunday",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:hora",
+      "surface_form": "hora",
+      "translation": "hour",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:minuto",
+      "surface_form": "minuto",
+      "translation": "minute",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:tiempo",
+      "surface_form": "tiempo",
+      "translation": "time / weather",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:semana",
+      "surface_form": "semana",
+      "translation": "week",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:mes",
+      "surface_form": "mes",
+      "translation": "month",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:ano",
+      "surface_form": "año",
+      "translation": "year",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:calendario",
+      "surface_form": "calendario",
+      "translation": "calendar",
+      "topic": "Time",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 6
+    },
+    {
+      "concept_id": "es:aeropuerto",
+      "surface_form": "aeropuerto",
+      "translation": "airport",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:avion",
+      "surface_form": "avión",
+      "translation": "airplane",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:tren",
+      "surface_form": "tren",
+      "translation": "train",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:hotel",
+      "surface_form": "hotel",
+      "translation": "hotel",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:pasaporte",
+      "surface_form": "pasaporte",
+      "translation": "passport",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:mapa",
+      "surface_form": "mapa",
+      "translation": "map",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:calle",
+      "surface_form": "calle",
+      "translation": "street",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:direccion",
+      "surface_form": "dirección",
+      "translation": "direction / address",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:izquierda",
+      "surface_form": "izquierda",
+      "translation": "left",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:derecha",
+      "surface_form": "derecha",
+      "translation": "right",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:recto",
+      "surface_form": "recto",
+      "translation": "straight ahead",
+      "topic": "Travel",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:cerca",
+      "surface_form": "cerca",
+      "translation": "near",
+      "topic": "Travel",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:lejos",
+      "surface_form": "lejos",
+      "translation": "far",
+      "topic": "Travel",
+      "part_of_speech": "adverb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:estacion",
+      "surface_form": "estación",
+      "translation": "station",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:boleto",
+      "surface_form": "boleto",
+      "translation": "ticket",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:equipaje",
+      "surface_form": "equipaje",
+      "translation": "luggage",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:aduanas",
+      "surface_form": "aduanas",
+      "translation": "customs",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 4,
+      "imp_score": 4,
+      "base_weight": 3.5,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:reservacion",
+      "surface_form": "reservación",
+      "translation": "reservation",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:playa",
+      "surface_form": "playa",
+      "translation": "beach",
+      "topic": "Travel",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 7
+    },
+    {
+      "concept_id": "es:precio",
+      "surface_form": "precio",
+      "translation": "price",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:comprar",
+      "surface_form": "comprar",
+      "translation": "to buy",
+      "topic": "Shopping",
+      "part_of_speech": "verb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:vender",
+      "surface_form": "vender",
+      "translation": "to sell",
+      "topic": "Shopping",
+      "part_of_speech": "verb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:pagar",
+      "surface_form": "pagar",
+      "translation": "to pay",
+      "topic": "Shopping",
+      "part_of_speech": "verb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:tienda",
+      "surface_form": "tienda",
+      "translation": "store / shop",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:mercado",
+      "surface_form": "mercado",
+      "translation": "market",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:dinero",
+      "surface_form": "dinero",
+      "translation": "money",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:tarjeta",
+      "surface_form": "tarjeta",
+      "translation": "card",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:efectivo",
+      "surface_form": "efectivo",
+      "translation": "cash",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:caro",
+      "surface_form": "caro",
+      "translation": "expensive",
+      "topic": "Shopping",
+      "part_of_speech": "adjective",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:barato",
+      "surface_form": "barato",
+      "translation": "cheap",
+      "topic": "Shopping",
+      "part_of_speech": "adjective",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:gratis",
+      "surface_form": "gratis",
+      "translation": "free",
+      "topic": "Shopping",
+      "part_of_speech": "adjective",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:descuento",
+      "surface_form": "descuento",
+      "translation": "discount",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:recibo",
+      "surface_form": "recibo",
+      "translation": "receipt",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:cambio",
+      "surface_form": "cambio",
+      "translation": "change (money)",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:oferta",
+      "surface_form": "oferta",
+      "translation": "offer / deal",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:cantidad",
+      "surface_form": "cantidad",
+      "translation": "quantity / amount",
+      "topic": "Shopping",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 8
+    },
+    {
+      "concept_id": "es:trabajo",
+      "surface_form": "trabajo",
+      "translation": "work / job",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:oficina",
+      "surface_form": "oficina",
+      "translation": "office",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:empresa",
+      "surface_form": "empresa",
+      "translation": "company",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:jefe",
+      "surface_form": "jefe",
+      "translation": "boss",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:reunion",
+      "surface_form": "reunión",
+      "translation": "meeting",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:contrato",
+      "surface_form": "contrato",
+      "translation": "contract",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:sueldo",
+      "surface_form": "sueldo",
+      "translation": "salary",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:colega",
+      "surface_form": "colega",
+      "translation": "colleague",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:profesion",
+      "surface_form": "profesión",
+      "translation": "profession",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:doctor",
+      "surface_form": "doctor",
+      "translation": "doctor",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:profesor",
+      "surface_form": "profesor",
+      "translation": "teacher",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:estudiante",
+      "surface_form": "estudiante",
+      "translation": "student",
+      "topic": "Work",
+      "part_of_speech": "noun",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:trabajar",
+      "surface_form": "trabajar",
+      "translation": "to work",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:estudiar",
+      "surface_form": "estudiar",
+      "translation": "to study",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:ensenar",
+      "surface_form": "enseñar",
+      "translation": "to teach",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:aprender",
+      "surface_form": "aprender",
+      "translation": "to learn",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:escribir",
+      "surface_form": "escribir",
+      "translation": "to write",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:leer",
+      "surface_form": "leer",
+      "translation": "to read",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:terminar",
+      "surface_form": "terminar",
+      "translation": "to finish",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:empezar",
+      "surface_form": "empezar",
+      "translation": "to start / begin",
+      "topic": "Work",
+      "part_of_speech": "verb",
+      "difficulty_level": 3,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 9
+    },
+    {
+      "concept_id": "es:ayuda",
+      "surface_form": "ayuda",
+      "translation": "help",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "speaking_friendly"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:emergencia",
+      "surface_form": "emergencia",
+      "translation": "emergency",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:hospital",
+      "surface_form": "hospital",
+      "translation": "hospital",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:policia",
+      "surface_form": "policía",
+      "translation": "police",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:medico",
+      "surface_form": "médico",
+      "translation": "doctor / physician",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:medicina",
+      "surface_form": "medicina",
+      "translation": "medicine",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:peligro",
+      "surface_form": "peligro",
+      "translation": "danger",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:perdido",
+      "surface_form": "perdido",
+      "translation": "lost",
+      "topic": "Emergency",
+      "part_of_speech": "adjective",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:accidente",
+      "surface_form": "accidente",
+      "translation": "accident",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:llamar",
+      "surface_form": "llamar",
+      "translation": "to call",
+      "topic": "Emergency",
+      "part_of_speech": "verb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:necesitar",
+      "surface_form": "necesitar",
+      "translation": "to need",
+      "topic": "Emergency",
+      "part_of_speech": "verb",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "speaking_friendly",
+        "listening_friendly"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:urgente",
+      "surface_form": "urgente",
+      "translation": "urgent",
+      "topic": "Emergency",
+      "part_of_speech": "adjective",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 3,
+      "imp_score": 5,
+      "base_weight": 4.4,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:fuego",
+      "surface_form": "fuego",
+      "translation": "fire",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 1,
+      "imp_score": 5,
+      "base_weight": 3.8,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:salida",
+      "surface_form": "salida",
+      "translation": "exit",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:telefono",
+      "surface_form": "teléfono",
+      "translation": "telephone",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "high",
+      "freq_score": 5,
+      "diff_score": 2,
+      "imp_score": 5,
+      "base_weight": 4.1,
+      "skill_affinity": [
+        "listening_friendly",
+        "reading_core"
+      ],
+      "unit_id": 10
+    },
+    {
+      "concept_id": "es:ambulancia",
+      "surface_form": "ambulancia",
+      "translation": "ambulance",
+      "topic": "Emergency",
+      "part_of_speech": "noun",
+      "difficulty_level": 2,
+      "frequency": "medium",
+      "freq_score": 3,
+      "diff_score": 3,
+      "imp_score": 4,
+      "base_weight": 3.2,
+      "skill_affinity": [
+        "listening_friendly"
+      ],
+      "unit_id": 10
+    }
+  ]
+}
