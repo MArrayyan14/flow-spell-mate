@@ -26,7 +26,7 @@ export async function seedConceptsIfEmpty() {
     const res = await fetch("/spanish_concepts.json");
     if (res.ok) concepts = await res.json();
   } catch { concepts = fallbackConcepts; }
-  await supabase.from("concepts").insert(concepts as never, { onConflict: "concept_id" });
+  await supabase.from("concepts").upsert(concepts as never, { onConflict: "concept_id", ignoreDuplicates: true });
 }
 
 export async function ensureProfile(userId: string, email?: string) {
