@@ -9,26 +9,8 @@ export type Memory = { id?: string; user_id: string; concept_id: string; attempt
 export type Profile = { id: string; display_name: string | null; xp_total: number; streak_days: number; last_streak_date: string | null; hearts: number; gems: number; league: string; weekly_xp: number; last_practiced?: string | null; created_at: string };
 export type ConceptWithMemory = Concept & { memory?: Memory; recall: number; status: ReturnType<typeof getStatus>; daysUntilReview: number };
 
-export const fallbackConcepts: Concept[] = [
-  {concept_id:"es:hola", surface_form:"hola", translation:"hello", unit_id:2, difficulty_level:1, base_weight:3.8, frequency:"high", topic:"Greetings", part_of_speech:"interjection", emoji:"👋"},
-  {concept_id:"es:agua", surface_form:"agua", translation:"water", unit_id:4, difficulty_level:1, base_weight:3.8, frequency:"high", topic:"Food", part_of_speech:"noun", emoji:"💧"},
-  {concept_id:"es:manzana", surface_form:"manzana", translation:"apple", unit_id:4, difficulty_level:1, base_weight:3.4, frequency:"high", topic:"Food", part_of_speech:"noun", emoji:"🍎", mnemonic:"Sounds like MAN-sana — imagine a man eating an apple"},
-  {concept_id:"es:gracias", surface_form:"gracias", translation:"thank you", unit_id:2, difficulty_level:1, base_weight:3.8, frequency:"high", topic:"Greetings", part_of_speech:"interjection", emoji:"🙏"},
-  {concept_id:"es:uno", surface_form:"uno", translation:"one", unit_id:3, difficulty_level:1, base_weight:3.8, frequency:"high", topic:"Numbers", part_of_speech:"numeral", emoji:"1️⃣"},
-  {concept_id:"es:madre", surface_form:"madre", translation:"mother", unit_id:5, difficulty_level:1, base_weight:3.6, frequency:"high", topic:"Family", part_of_speech:"noun", emoji:"👩"},
-  {concept_id:"es:hoy", surface_form:"hoy", translation:"today", unit_id:6, difficulty_level:1, base_weight:3.8, frequency:"high", topic:"Time", part_of_speech:"adverb", emoji:"📅"},
-  {concept_id:"es:ayuda", surface_form:"ayuda", translation:"help", unit_id:10, difficulty_level:1, base_weight:3.8, frequency:"high", topic:"Emergency", part_of_speech:"noun", emoji:"🆘"},
-];
-
 export async function seedConceptsIfEmpty() {
-  const { count } = await db.from("concepts").select("concept_id", { count: "exact", head: true });
-  if ((count ?? 0) > 0) return;
-  let concepts = fallbackConcepts;
-  try {
-    const res = await fetch("/spanish_concepts.json");
-    if (res.ok) concepts = await res.json();
-  } catch { concepts = fallbackConcepts; }
-  await db.from("concepts").upsert(concepts, { onConflict: "concept_id", ignoreDuplicates: true });
+  return;
 }
 
 export async function ensureProfile(userId: string, email?: string) {
