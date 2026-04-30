@@ -35,7 +35,7 @@ export async function fetchConceptsByUnit(unitId: number): Promise<Concept[]> {
     
     if (error) throw error;
     if (!data || data.length === 0) {
-      return loadConceptsFromJSON().filter(c => c.unit_id === unitId);
+      return (await loadConceptsFromJSON()).filter(c => c.unit_id === unitId);
     }
     
     return data as Concept[];
