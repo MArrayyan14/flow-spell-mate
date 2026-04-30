@@ -35,13 +35,13 @@ export async function fetchConceptsByUnit(unitId: number): Promise<Concept[]> {
     
     if (error) throw error;
     if (!data || data.length === 0) {
-      return loadConceptsFromJSON().filter(c => c.unit_id === unitId);
+      return (await loadConceptsFromJSON()).filter(c => c.unit_id === unitId);
     }
     
     return data as Concept[];
   } catch (err) {
     console.warn("[Lesson Service] Failed to fetch concepts from Supabase, using JSON fallback:", err);
-    return loadConceptsFromJSON().filter(c => c.unit_id === unitId);
+    return (await loadConceptsFromJSON()).filter(c => c.unit_id === unitId);
   }
 }
 
