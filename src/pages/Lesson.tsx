@@ -23,7 +23,8 @@ export default function Lesson() {
   const [correctStreak, setCorrectStreak] = useState(0);
   const [complete, setComplete] = useState(false);
   const query = useLesson(id, user?.id);
-  useEffect(() => { if (query.data?.concepts && profile && store.exercises.length === 0) store.setLesson(makeExercises(query.data.concepts, mode), 99, mode); }, [query.data?.concepts, mode]);
+  useEffect(() => { store.reset(); setComplete(false); setCorrectStreak(0); }, [id, mode]);
+  useEffect(() => { if (query.data?.concepts && profile && store.exercises.length === 0 && !complete) store.setLesson(makeExercises(query.data.concepts, mode), 99, mode); }, [query.data?.concepts, mode, complete]);
   const exercise = store.exercises[store.currentIndex];
   const options = useMemo(() => exercise ? makeOptions(exercise.concept, query.data?.concepts ?? []) : [], [exercise, query.data?.concepts]);
   if (!user) return <Navigate to="/login" />;
