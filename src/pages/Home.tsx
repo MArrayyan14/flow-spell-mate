@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Lock } from "lucide-react";
+
 import { PageTopBar, LoadingGrid, ErrorState } from "@/components/lingua/AppShell";
 import { StrengthBar } from "@/components/lingua/StrengthBar";
 import { enrichConcepts, unitStrength, type Unit } from "@/lib/lingua";
