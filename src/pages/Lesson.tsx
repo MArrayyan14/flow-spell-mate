@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { X, Volume2 } from "lucide-react";
+import { X, Volume2, Heart, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { speakSpanish, updateMemory, type ConceptWithMemory } from "@/lib/lingua";
@@ -138,26 +138,47 @@ export default function Lesson() {
       />
     );
 
+  const progressPct = (store.currentIndex / Math.max(1, store.exercises.length)) * 100;
+  const hearts = profile?.hearts ?? 5;
+
   return (
-    <main className="min-h-screen bg-background p-4">
-      <div className="mx-auto max-w-2xl">
-        <header className="mb-8 flex items-center gap-4">
+    <main className="min-h-screen bg-background page-enter">
+      <div className="mx-auto w-full px-4 pt-4 pb-10" style={{ maxWidth: 480 }}>
+        <header className="mb-6 flex items-center gap-3">
           <button
             onClick={() => confirm("Exit lesson?") && navigate(`/unit/${id}`)}
-            className="rounded-2xl p-2 hover:bg-muted"
+            className="grid h-9 w-9 place-items-center rounded-full text-[#999] transition hover:bg-muted"
+            aria-label="Exit lesson"
           >
-            <X />
+            <X size={20} />
           </button>
-          <div className="h-4 flex-1 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-2 flex-1 overflow-hidden rounded-full"
+            style={{ backgroundColor: "#E5E5E5" }}
+          >
             <div
-              className="h-full bg-primary transition-all"
-              style={{ width: `${(store.currentIndex / store.exercises.length) * 100}%` }}
+              className="h-full rounded-full transition-all duration-300"
+              style={{ width: `${progressPct}%`, backgroundColor: "#58CC02" }}
             />
           </div>
-          <span className="font-black">⭐ {profile?.xp_total ?? 0} XP</span>
+          <div className="flex items-center gap-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Heart
+                key={i}
+                size={16}
+                style={{
+                  color: i < hearts ? "#FF4B4B" : "#E5E5E5",
+                  fill: i < hearts ? "#FF4B4B" : "transparent",
+                }}
+              />
+            ))}
+          </div>
         </header>
 
-        <section className="lif-card min-h-[460px] p-6 text-center animate-pop" key={exercise.id}>
+        <section
+          className="lif-card min-h-[460px] p-6 shadow-md animate-pop"
+          key={exercise.id}
+        >
           {exercise.type === "introduce" && <Intro concept={exercise.concept} onNext={nextStep} />}
           {exercise.type === "choice" && (
             <ChoiceExercise concept={exercise.concept} options={options} onAnswer={finishAnswer} />
@@ -167,7 +188,6 @@ export default function Lesson() {
               prompt={exercise.concept.translation}
               onSubmit={(value) =>
                 finishAnswer(
-                  // import isCloseEnough from lingua via a small inline check
                   normalize(value) === normalize(exercise.concept.surface_form) ||
                     levenshteinClose(value, exercise.concept.surface_form)
                 )
@@ -186,6 +206,11 @@ export default function Lesson() {
             <SpeakingExercise target={exercise.concept.surface_form} onAnswer={finishAnswer} />
           )}
         </section>
+
+        <div className="mt-4 flex items-center justify-center gap-1.5 text-xs font-semibold text-muted-foreground">
+          <Zap size={12} style={{ color: "#FFD700" }} />
+          {profile?.xp_total ?? 0} XP
+        </div>
       </div>
 
       <WrongAnswerSheet
@@ -314,21 +339,49 @@ function makeOptions(c: ConceptWithMemory, all: ConceptWithMemory[]) {
 
 function Intro({ concept, onNext }: { concept: ConceptWithMemory; onNext: () => void }) {
   return (
-    <div className="grid gap-5 place-items-center">
-      <span className="rounded-full bg-primary-soft px-4 py-2 font-black text-primary">
-        ✨ New Word!
+    <div className="grid place-items-center gap-5 py-2">
+      <span
+        className="rounded-full px-3 py-1 text-white"
+        style={{
+          fontSize: 11,
+          fontWeight: 800,
+          letterSpacing: 0.6,
+          textTransform: "uppercase",
+          backgroundColor: "#58CC02",
+        }}
+      >
+        New Word
       </span>
-      <h1 className="text-5xl font-black">{concept.surface_form}</h1>
+      <h1
+        className="text-center"
+        style={{ fontSize: 48, fontWeight: 800, color: "#1A1A1A", lineHeight: 1.1 }}
+      >
+        {concept.surface_form}
+      </h1>
+      <div className="my-1 h-px w-24" style={{ backgroundColor: "#E5E5E5" }} />
+      <p className="text-center" style={{ fontSize: 24, fontWeight: 400, color: "#555" }}>
+        {concept.translation}
+      </p>
+      {concept.mnemonic && (
+        <p className="text-center italic" style={{ fontSize: 14, color: "#888" }}>
+          {concept.mnemonic}
+        </p>
+      )}
       <button
         onClick={() => speakSpanish(concept.surface_form)}
-        className="text-6xl transition hover:scale-110"
+        aria-label="Play pronunciation"
+        className="grid h-11 w-11 place-items-center rounded-full text-white transition active:scale-95"
+        style={{ backgroundColor: "#58CC02" }}
       >
-        {concept.emoji}
-        <Volume2 className="mx-auto mt-2" />
+        <Volume2 size={20} />
       </button>
-      <p className="text-2xl font-bold">{concept.translation}</p>
-      {concept.mnemonic && <p className="italic text-muted-foreground">{concept.mnemonic}</p>}
-      <Button onClick={onNext}>Got it! →</Button>
+      <button
+        onClick={onNext}
+        className="mt-3 w-full rounded-xl text-white font-bold transition active:scale-[0.98]"
+        style={{ height: 48, backgroundColor: "#58CC02" }}
+      >
+        Got it
+      </button>
     </div>
   );
 }
@@ -348,10 +401,10 @@ function Flashcard({
     <div className="grid gap-5">
       <button
         onClick={() => setFlipped(!flipped)}
-        className="min-h-72 rounded-2xl bg-primary-soft p-8 transition hover:scale-[1.01]"
+        className="min-h-72 rounded-2xl p-8 transition hover:scale-[1.01]"
+        style={{ backgroundColor: "#F0FFF4" }}
       >
-        <p className="text-6xl">{concept.emoji}</p>
-        <h1 className="mt-4 text-5xl font-black text-primary">
+        <h1 className="mt-2" style={{ fontSize: 44, fontWeight: 800, color: "#166534" }}>
           {flipped ? concept.translation : concept.surface_form}
         </h1>
         <p className="mt-4 font-semibold text-muted-foreground">
@@ -360,10 +413,8 @@ function Flashcard({
       </button>
       {flipped && (
         <div className="grid grid-cols-2 gap-3">
-          <Button variant="dangerSoft" onClick={() => onAnswer(false)}>
-            😅 Missed it
-          </Button>
-          <Button onClick={() => onAnswer(true)}>✅ Got it</Button>
+          <Button variant="outline" onClick={() => onAnswer(false)}>Missed it</Button>
+          <Button onClick={() => onAnswer(true)}>Got it</Button>
         </div>
       )}
     </div>
