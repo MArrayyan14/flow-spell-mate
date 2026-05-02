@@ -339,21 +339,49 @@ function makeOptions(c: ConceptWithMemory, all: ConceptWithMemory[]) {
 
 function Intro({ concept, onNext }: { concept: ConceptWithMemory; onNext: () => void }) {
   return (
-    <div className="grid gap-5 place-items-center">
-      <span className="rounded-full bg-primary-soft px-4 py-2 font-black text-primary">
-        ✨ New Word!
+    <div className="grid place-items-center gap-5 py-2">
+      <span
+        className="rounded-full px-3 py-1 text-white"
+        style={{
+          fontSize: 11,
+          fontWeight: 800,
+          letterSpacing: 0.6,
+          textTransform: "uppercase",
+          backgroundColor: "#58CC02",
+        }}
+      >
+        New Word
       </span>
-      <h1 className="text-5xl font-black">{concept.surface_form}</h1>
+      <h1
+        className="text-center"
+        style={{ fontSize: 48, fontWeight: 800, color: "#1A1A1A", lineHeight: 1.1 }}
+      >
+        {concept.surface_form}
+      </h1>
+      <div className="my-1 h-px w-24" style={{ backgroundColor: "#E5E5E5" }} />
+      <p className="text-center" style={{ fontSize: 24, fontWeight: 400, color: "#555" }}>
+        {concept.translation}
+      </p>
+      {concept.mnemonic && (
+        <p className="text-center italic" style={{ fontSize: 14, color: "#888" }}>
+          {concept.mnemonic}
+        </p>
+      )}
       <button
         onClick={() => speakSpanish(concept.surface_form)}
-        className="text-6xl transition hover:scale-110"
+        aria-label="Play pronunciation"
+        className="grid h-11 w-11 place-items-center rounded-full text-white transition active:scale-95"
+        style={{ backgroundColor: "#58CC02" }}
       >
-        {concept.emoji}
-        <Volume2 className="mx-auto mt-2" />
+        <Volume2 size={20} />
       </button>
-      <p className="text-2xl font-bold">{concept.translation}</p>
-      {concept.mnemonic && <p className="italic text-muted-foreground">{concept.mnemonic}</p>}
-      <Button onClick={onNext}>Got it! →</Button>
+      <button
+        onClick={onNext}
+        className="mt-3 w-full rounded-xl text-white font-bold transition active:scale-[0.98]"
+        style={{ height: 48, backgroundColor: "#58CC02" }}
+      >
+        Got it
+      </button>
     </div>
   );
 }
@@ -373,10 +401,10 @@ function Flashcard({
     <div className="grid gap-5">
       <button
         onClick={() => setFlipped(!flipped)}
-        className="min-h-72 rounded-2xl bg-primary-soft p-8 transition hover:scale-[1.01]"
+        className="min-h-72 rounded-2xl p-8 transition hover:scale-[1.01]"
+        style={{ backgroundColor: "#F0FFF4" }}
       >
-        <p className="text-6xl">{concept.emoji}</p>
-        <h1 className="mt-4 text-5xl font-black text-primary">
+        <h1 className="mt-2" style={{ fontSize: 44, fontWeight: 800, color: "#166534" }}>
           {flipped ? concept.translation : concept.surface_form}
         </h1>
         <p className="mt-4 font-semibold text-muted-foreground">
@@ -385,10 +413,8 @@ function Flashcard({
       </button>
       {flipped && (
         <div className="grid grid-cols-2 gap-3">
-          <Button variant="dangerSoft" onClick={() => onAnswer(false)}>
-            😅 Missed it
-          </Button>
-          <Button onClick={() => onAnswer(true)}>✅ Got it</Button>
+          <Button variant="outline" onClick={() => onAnswer(false)}>Missed it</Button>
+          <Button onClick={() => onAnswer(true)}>Got it</Button>
         </div>
       )}
     </div>
