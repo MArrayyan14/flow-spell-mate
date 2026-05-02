@@ -7,14 +7,6 @@ type Props = {
   onAnswer: (correct: boolean) => void;
 };
 
-/**
- * Multiple choice with:
- *  - Tap-to-answer (no separate confirm)
- *  - Lock all options after first tap
- *  - Green = correct, Red = wrong-selected, Green = correct-when-wrong
- *  - 150ms press scale animation
- *  - Auto-advance handled by parent via onAnswer (parent advances after delay)
- */
 export default function ChoiceExercise({ concept, options, onAnswer }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -24,29 +16,30 @@ export default function ChoiceExercise({ concept, options, onAnswer }: Props) {
     onAnswer(option === concept.translation);
   };
 
-  const styleFor = (option: string) => {
+  const styleFor = (option: string): React.CSSProperties => {
     if (selected === null) {
-      return "border-2 border-border bg-card hover:bg-muted";
+      return { border: "1.5px solid #E5E5E5", background: "#fff", color: "#1A1A1A" };
     }
     const isCorrect = option === concept.translation;
     const isPicked = option === selected;
-    if (isCorrect) return "border-2 border-green-500 bg-green-100 text-green-900";
-    if (isPicked) return "border-2 border-red-500 bg-red-100 text-red-900";
-    return "border-2 border-border bg-card opacity-60";
+    if (isCorrect) return { border: "2px solid #58CC02", background: "#F0FFF4", color: "#166534" };
+    if (isPicked) return { border: "2px solid #FF4B4B", background: "#FFF1F1", color: "#7F1D1D" };
+    return { border: "1.5px solid #E5E5E5", background: "#fff", color: "#1A1A1A", opacity: 0.5 };
   };
 
   return (
     <div className="grid gap-5">
-      <h1 className="text-2xl font-black">What does {concept.surface_form} mean?</h1>
-      <div className="grid gap-3">
+      <h2 className="text-center" style={{ fontSize: 18, fontWeight: 600, color: "#1A1A1A" }}>
+        What does <span style={{ fontWeight: 800 }}>{concept.surface_form}</span> mean?
+      </h2>
+      <div className="grid gap-2.5">
         {options.map((o) => (
           <button
             key={o}
             disabled={selected !== null}
             onClick={() => pick(o)}
-            className={`rounded-2xl px-4 py-4 text-lg font-bold transition-transform duration-150 active:scale-[0.97] ${styleFor(
-              o
-            )}`}
+            className="w-full rounded-xl text-base font-semibold transition-transform duration-150 active:scale-[0.97]"
+            style={{ height: 52, ...styleFor(o) }}
           >
             {o}
           </button>
