@@ -138,26 +138,47 @@ export default function Lesson() {
       />
     );
 
+  const progressPct = (store.currentIndex / Math.max(1, store.exercises.length)) * 100;
+  const hearts = profile?.hearts ?? 5;
+
   return (
-    <main className="min-h-screen bg-background p-4">
-      <div className="mx-auto max-w-2xl">
-        <header className="mb-8 flex items-center gap-4">
+    <main className="min-h-screen bg-background page-enter">
+      <div className="mx-auto w-full px-4 pt-4 pb-10" style={{ maxWidth: 480 }}>
+        <header className="mb-6 flex items-center gap-3">
           <button
             onClick={() => confirm("Exit lesson?") && navigate(`/unit/${id}`)}
-            className="rounded-2xl p-2 hover:bg-muted"
+            className="grid h-9 w-9 place-items-center rounded-full text-[#999] transition hover:bg-muted"
+            aria-label="Exit lesson"
           >
-            <X />
+            <X size={20} />
           </button>
-          <div className="h-4 flex-1 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-2 flex-1 overflow-hidden rounded-full"
+            style={{ backgroundColor: "#E5E5E5" }}
+          >
             <div
-              className="h-full bg-primary transition-all"
-              style={{ width: `${(store.currentIndex / store.exercises.length) * 100}%` }}
+              className="h-full rounded-full transition-all duration-300"
+              style={{ width: `${progressPct}%`, backgroundColor: "#58CC02" }}
             />
           </div>
-          <span className="font-black">⭐ {profile?.xp_total ?? 0} XP</span>
+          <div className="flex items-center gap-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Heart
+                key={i}
+                size={16}
+                style={{
+                  color: i < hearts ? "#FF4B4B" : "#E5E5E5",
+                  fill: i < hearts ? "#FF4B4B" : "transparent",
+                }}
+              />
+            ))}
+          </div>
         </header>
 
-        <section className="lif-card min-h-[460px] p-6 text-center animate-pop" key={exercise.id}>
+        <section
+          className="lif-card min-h-[460px] p-6 shadow-md animate-pop"
+          key={exercise.id}
+        >
           {exercise.type === "introduce" && <Intro concept={exercise.concept} onNext={nextStep} />}
           {exercise.type === "choice" && (
             <ChoiceExercise concept={exercise.concept} options={options} onAnswer={finishAnswer} />
@@ -167,7 +188,6 @@ export default function Lesson() {
               prompt={exercise.concept.translation}
               onSubmit={(value) =>
                 finishAnswer(
-                  // import isCloseEnough from lingua via a small inline check
                   normalize(value) === normalize(exercise.concept.surface_form) ||
                     levenshteinClose(value, exercise.concept.surface_form)
                 )
@@ -186,6 +206,11 @@ export default function Lesson() {
             <SpeakingExercise target={exercise.concept.surface_form} onAnswer={finishAnswer} />
           )}
         </section>
+
+        <div className="mt-4 flex items-center justify-center gap-1.5 text-xs font-semibold text-muted-foreground">
+          <Zap size={12} style={{ color: "#FFD700" }} />
+          {profile?.xp_total ?? 0} XP
+        </div>
       </div>
 
       <WrongAnswerSheet
