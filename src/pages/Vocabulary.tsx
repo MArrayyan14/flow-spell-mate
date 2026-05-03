@@ -116,7 +116,7 @@ export default function Vocabulary() {
         {filtered.length === 0 ? (
           <EmptyVocab />
         ) : (
-          <section className="grid gap-3">
+          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((c) => (
               <WordCard key={c.concept_id} c={c} onClick={() => setSelected(c)} />
             ))}
