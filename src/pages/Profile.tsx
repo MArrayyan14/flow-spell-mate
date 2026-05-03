@@ -113,6 +113,8 @@ export default function Profile() {
           </p>
         </section>
 
+        <MemorySnapshot concepts={concepts} />
+
         <section className="mb-5 rounded-2xl bg-white p-5 shadow-sm" style={{ height: 240 }}>
           <h2 style={{ fontSize: 16, fontWeight: 700 }} className="mb-3">Weekly XP</h2>
           <ResponsiveContainer width="100%" height="80%">
