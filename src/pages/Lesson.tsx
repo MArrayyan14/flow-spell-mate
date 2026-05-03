@@ -208,11 +208,13 @@ export default function Lesson() {
         </section>
 
         {correctStreak >= 3 && (
-          <div
-            className="mx-auto mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
-            style={{ backgroundColor: "#FEF3C7", color: "#92400E" }}
-          >
-            <Zap size={12} /> {correctStreak} in a row — nice streak
+          <div className="mt-3 flex justify-center">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
+              style={{ backgroundColor: "#FEF3C7", color: "#92400E" }}
+            >
+              <Zap size={12} /> {correctStreak} in a row — nice streak
+            </span>
           </div>
         )}
 
