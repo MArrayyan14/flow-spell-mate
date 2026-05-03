@@ -161,3 +161,40 @@ function List({ title, rows }: { title: string; rows: any[] }) {
     </div>
   );
 }
+
+function MemorySnapshot({ concepts }: { concepts: ReturnType<typeof enrichConcepts> }) {
+  const learned = concepts.filter((c) => (c.memory?.attempts ?? 0) > 0);
+  const dueToday = learned.filter((c) => c.daysUntilReview <= 1).length;
+  const avgHalf = learned.length
+    ? learned.reduce((s, c) => s + (c.memory?.half_life_est ?? 0), 0) / learned.length
+    : 0;
+  const strongPct = learned.length
+    ? Math.round((learned.filter((c) => c.recall >= 0.8).length / learned.length) * 100)
+    : 0;
+
+  return (
+    <section className="mb-5 rounded-2xl bg-white p-5 shadow-sm">
+      <div className="mb-3 flex items-center gap-2">
+        <Brain size={18} style={{ color: "#9333EA" }} />
+        <h2 style={{ fontSize: 16, fontWeight: 700 }}>Memory snapshot</h2>
+      </div>
+      <p style={{ fontSize: 12, color: "#64748B" }} className="mb-4">
+        Powered by your half-life recall model — updated every answer.
+      </p>
+      <div className="grid grid-cols-3 gap-2">
+        <SnapStat label="Avg. half-life" value={`${avgHalf.toFixed(1)}d`} icon={<Clock size={14} style={{ color: "#1CB0F6" }} />} />
+        <SnapStat label="Due today" value={dueToday} icon={<Flame size={14} style={{ color: "#FF7A00" }} />} />
+        <SnapStat label="Strong" value={`${strongPct}%`} icon={<Star size={14} style={{ color: "#9333EA" }} />} />
+      </div>
+    </section>
+  );
+}
+
+function SnapStat({ label, value, icon }: { label: string; value: string | number; icon: React.ReactNode }) {
+  return (
+    <div className="rounded-xl p-3" style={{ backgroundColor: "#F8FAFC" }}>
+      <div className="flex items-center gap-1.5">{icon}<span style={{ fontSize: 10, color: "#64748B", fontWeight: 600 }}>{label}</span></div>
+      <p style={{ fontSize: 18, fontWeight: 800, color: "#0F172A" }} className="mt-1">{value}</p>
+    </div>
+  );
+}
