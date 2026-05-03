@@ -1,10 +1,12 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Sparkles, Hand, Hash, UtensilsCrossed, Users, Clock, Plane, ShoppingBag,
-  Briefcase, ShieldAlert, BookOpen as BookIcon,
+  Briefcase, ShieldAlert, BookOpen as BookIcon, Play, Flame,
 } from "lucide-react";
 import { PageTopBar, LoadingGrid, ErrorState } from "@/components/lingua/AppShell";
 import { StrengthBar } from "@/components/lingua/StrengthBar";
+import Onboarding, { shouldShowOnboarding } from "@/components/lingua/Onboarding";
 import { enrichConcepts, unitStrength, type Unit } from "@/lib/lingua";
 import { useAuthStore } from "@/stores/authStore";
 import { useLessons } from "@/hooks/useLessons";
@@ -35,6 +37,11 @@ export default function Home() {
   const { user, profile } = useAuthStore();
   const navigate = useNavigate();
   const query = useLessons(user?.id);
+  const [showOnb, setShowOnb] = useState(false);
+
+  useEffect(() => {
+    if (user) setShowOnb(shouldShowOnboarding());
+  }, [user]);
 
   if (query.isLoading)
     return (
@@ -66,8 +73,22 @@ export default function Home() {
   const todayXp = profile?.weekly_xp ?? 0;
   const goalPct = Math.min(1, todayXp / DAILY_GOAL);
 
+  // "Continue learning" — pick the unit with weakest strength but some progress,
+  // or the first unit for brand-new users.
+  const sortedUnits = [...query.data.units].sort((a, b) => {
+    const sa = strengthByUnit.get(a.id) ?? 0;
+    const sb = strengthByUnit.get(b.id) ?? 0;
+    if (sa === 0 && sb === 0) return a.order_index - b.order_index;
+    if (sa === 0) return 1;
+    if (sb === 0) return -1;
+    return sa - sb;
+  });
+  const continueUnit = sortedUnits[0] ?? query.data.units[0];
+  const continueTheme = continueUnit ? themeFor(continueUnit.topic) : themeFor("Core");
+
   return (
     <main className="lif-page page-enter">
+      {showOnb && <Onboarding onDone={() => setShowOnb(false)} />}
       <div className="lif-shell">
         <PageTopBar />
 
@@ -82,19 +103,63 @@ export default function Home() {
 
         {/* Hero summary */}
         <section
-          className="mb-5 flex items-center justify-between rounded-2xl p-5 shadow-sm"
-          style={{ background: "linear-gradient(135deg, #f0fff4, #dcfce7)" }}
+          className="mb-4 flex items-center justify-between rounded-3xl p-5"
+          style={{
+            background: "linear-gradient(135deg, #ECFDF5 0%, #DCFCE7 60%, #BBF7D0 100%)",
+            boxShadow: "0 1px 2px rgba(16,24,40,.04), 0 12px 28px -14px rgba(34,197,94,.35)",
+          }}
         >
           <div className="min-w-0">
-            <p style={{ fontSize: 18, fontWeight: 700, color: "#1A1A1A" }} className="truncate">
-              Keep it up, {firstName}!
+            <p style={{ fontSize: 12, fontWeight: 700, color: "#047857", letterSpacing: 0.6, textTransform: "uppercase" }}>
+              {greeting()}
             </p>
-            <p style={{ fontSize: 13, color: "#52606D" }} className="mt-1 truncate">
-              {wordsLearned} words learned · {profile?.streak_days ?? 0} day streak
+            <p className="mt-1 truncate" style={{ fontSize: 22, fontWeight: 800, color: "#064E3B" }}>
+              {firstName}
+            </p>
+            <p className="mt-1 inline-flex items-center gap-1.5 truncate" style={{ fontSize: 12, color: "#047857", fontWeight: 600 }}>
+              <Flame size={12} /> {profile?.streak_days ?? 0} day streak · {wordsLearned} words
             </p>
           </div>
           <ProgressRing value={goalPct} current={todayXp} goal={DAILY_GOAL} />
         </section>
+
+        {/* Continue learning CTA */}
+        {continueUnit && (
+          <Link
+            to={`/lesson/${continueUnit.id}`}
+            className="mb-5 block rounded-2xl bg-white p-4 lif-soft-shadow transition active:scale-[0.99]"
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="grid h-12 w-12 shrink-0 place-items-center rounded-xl"
+                style={{ backgroundColor: continueTheme.bg, color: continueTheme.fg }}
+              >
+                <continueTheme.icon size={22} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p style={{ fontSize: 11, fontWeight: 700, color: "#16A34A", letterSpacing: 0.5, textTransform: "uppercase" }}>
+                  {wordsLearned === 0 ? "Start here" : "Continue learning"}
+                </p>
+                <p className="truncate" style={{ fontSize: 15, fontWeight: 700, color: "#0F172A" }}>
+                  {continueUnit.topic}
+                </p>
+                <p className="truncate" style={{ fontSize: 12, color: "#64748B" }}>
+                  {wordsLearned === 0 ? "A 5-minute first lesson" : `${Math.round((strengthByUnit.get(continueUnit.id) ?? 0) * 100)}% strength · keep going`}
+                </p>
+              </div>
+              <div
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-white"
+                style={{ backgroundColor: "#58CC02", boxShadow: "0 6px 14px -6px rgba(88,204,2,0.6)" }}
+              >
+                <Play size={16} fill="#fff" strokeWidth={0} />
+              </div>
+            </div>
+          </Link>
+        )}
+
+        <h2 className="mb-3" style={{ fontSize: 13, fontWeight: 700, color: "#64748B", letterSpacing: 0.6, textTransform: "uppercase" }}>
+          All units
+        </h2>
 
         {/* Unit list */}
         <section className="grid gap-3">
@@ -106,7 +171,7 @@ export default function Home() {
               <Link
                 key={unit.id}
                 to={`/unit/${unit.id}`}
-                className="lif-card relative block p-4 transition hover:-translate-y-0.5 hover:shadow-md"
+                className="lif-card lif-soft-shadow relative block p-4 transition hover:-translate-y-0.5"
               >
                 <span
                   className="absolute right-3 top-3 rounded-full px-2 py-0.5 font-semibold"
@@ -140,6 +205,13 @@ export default function Home() {
       </div>
     </main>
   );
+}
+
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
 }
 
 function ProgressRing({ value, current, goal }: { value: number; current: number; goal: number }) {
