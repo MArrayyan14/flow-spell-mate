@@ -26,7 +26,7 @@ export function BottomNav() {
   ];
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 bg-white"
+      className="fixed inset-x-0 bottom-0 z-40 bg-white md:hidden"
       style={{
         borderTop: "1px solid #F0F0F0",
         boxShadow: "0 -2px 10px rgba(0,0,0,0.06)",
@@ -64,16 +64,43 @@ export function BottomNav() {
 }
 
 export function PageTopBar() {
-  const { profile } = useAuthStore();
+  const { profile, user } = useAuthStore();
+  const location = useLocation();
   const chip = "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold";
+  const navItems = [
+    { to: "/home", label: "Home", icon: Home },
+    { to: "/vocabulary", label: "Vocabulary", icon: BookOpen },
+    { to: "/profile", label: "Profile", icon: UserRound },
+  ];
+  const showNav = !!user && location.pathname !== "/login" && !location.pathname.startsWith("/lesson");
   return (
     <header
-      className="-mx-4 mb-5 flex items-center justify-between bg-white px-4 py-3 md:-mx-6 md:px-6"
+      className="-mx-4 mb-5 flex items-center justify-between gap-6 bg-white px-4 py-3 md:-mx-6 md:px-6"
       style={{ borderBottom: "1px solid #F0F0F0" }}
     >
-      <NavLink to="/home" style={{ fontSize: 20, fontWeight: 700, color: "#58CC02" }}>
-        LinguaFlow
-      </NavLink>
+      <div className="flex items-center gap-8">
+        <NavLink to="/home" style={{ fontSize: 20, fontWeight: 700, color: "#58CC02" }}>
+          LinguaFlow
+        </NavLink>
+        {showNav && (
+          <nav className="hidden items-center gap-1 md:flex">
+            {navItems.map(({ to, label, icon: Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-bold transition"
+                style={({ isActive }) => ({
+                  color: isActive ? "#16A34A" : "#475569",
+                  backgroundColor: isActive ? "#F0FDF4" : "transparent",
+                })}
+              >
+                <Icon size={16} />
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+        )}
+      </div>
       <div className="flex items-center gap-2">
         <span className={chip} style={{ backgroundColor: "#F5F5F5", color: "#1A1A1A" }}>
           <Flame size={14} style={{ color: "#FF7A00" }} />
