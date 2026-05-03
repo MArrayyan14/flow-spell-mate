@@ -1,10 +1,12 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Sparkles, Hand, Hash, UtensilsCrossed, Users, Clock, Plane, ShoppingBag,
-  Briefcase, ShieldAlert, BookOpen as BookIcon,
+  Briefcase, ShieldAlert, BookOpen as BookIcon, Play, Flame,
 } from "lucide-react";
 import { PageTopBar, LoadingGrid, ErrorState } from "@/components/lingua/AppShell";
 import { StrengthBar } from "@/components/lingua/StrengthBar";
+import Onboarding, { shouldShowOnboarding } from "@/components/lingua/Onboarding";
 import { enrichConcepts, unitStrength, type Unit } from "@/lib/lingua";
 import { useAuthStore } from "@/stores/authStore";
 import { useLessons } from "@/hooks/useLessons";
