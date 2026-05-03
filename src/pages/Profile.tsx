@@ -1,6 +1,6 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { useQuery } from "@tanstack/react-query";
-import { Flame, Zap, BookOpen, Star } from "lucide-react";
+import { Flame, Zap, BookOpen, Star, Brain, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { PageTopBar, LoadingGrid, ErrorState } from "@/components/lingua/AppShell";
