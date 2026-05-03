@@ -176,7 +176,7 @@ export default function Lesson() {
         </header>
 
         <section
-          className="lif-card min-h-[460px] p-6 shadow-md animate-pop"
+          className="lif-card exercise-enter min-h-[460px] p-6 lif-soft-shadow"
           key={exercise.id}
         >
           {exercise.type === "introduce" && <Intro concept={exercise.concept} onNext={nextStep} />}
@@ -206,6 +206,15 @@ export default function Lesson() {
             <SpeakingExercise target={exercise.concept.surface_form} onAnswer={finishAnswer} />
           )}
         </section>
+
+        {correctStreak >= 3 && (
+          <div
+            className="mx-auto mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
+            style={{ backgroundColor: "#FEF3C7", color: "#92400E" }}
+          >
+            <Zap size={12} /> {correctStreak} in a row — nice streak
+          </div>
+        )}
 
         <div className="mt-4 flex items-center justify-center gap-1.5 text-xs font-semibold text-muted-foreground">
           <Zap size={12} style={{ color: "#FFD700" }} />
