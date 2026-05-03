@@ -147,3 +147,22 @@
   100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
 }
 .confetti-piece { animation: confettiFall linear forwards; }
+
+/* ---------- Lesson exercise slide-in ---------- */
+@keyframes exerciseIn {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.exercise-enter { animation: exerciseIn 260ms cubic-bezier(.22,.9,.32,1) both; }
+
+/* ---------- Onboarding ---------- */
+@keyframes onbFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.onb-fade { animation: onbFade 280ms ease-out both; }
+
+/* ---------- Soft card hover ---------- */
+.lif-soft-shadow { box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 18px -8px rgba(16,24,40,.10); }
+.lif-soft-shadow:hover { box-shadow: 0 2px 4px rgba(16,24,40,.05), 0 12px 28px -10px rgba(16,24,40,.14); }
+
+/* ---------- Hide scrollbar on chip rows ---------- */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
