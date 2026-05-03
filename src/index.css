@@ -92,7 +92,8 @@
   @media (min-width: 768px) {
     .lif-page { padding-left: 24px; padding-right: 24px; padding-top: 24px; }
   }
-  .lif-shell { @apply mx-auto w-full; max-width: 480px; }
+  .lif-shell { @apply mx-auto w-full; max-width: 1120px; }
+  .lif-shell-narrow { @apply mx-auto w-full; max-width: 560px; }
   .lif-input {
     @apply w-full rounded-xl border bg-background px-4 text-base outline-none transition;
     height: 48px;
