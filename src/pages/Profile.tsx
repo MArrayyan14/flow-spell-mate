@@ -93,7 +93,7 @@ export default function Profile() {
           </div>
         </section>
 
-        <section className="mb-5 grid grid-cols-2 gap-2">
+        <section className="mb-5 grid grid-cols-2 gap-2 md:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="rounded-xl bg-white p-3 shadow-sm">
               <div className="flex items-center gap-1.5">{s.icon}<span style={{ fontSize: 11, color: "#777" }}>{s.label}</span></div>
@@ -102,37 +102,37 @@ export default function Profile() {
           ))}
         </section>
 
-        <section className="mb-5 rounded-2xl bg-white p-5 shadow-sm">
-          <h2 style={{ fontSize: 16, fontWeight: 700 }} className="mb-3">CEFR Level: {level}</h2>
-          <StrengthBar value={levelValue} />
-          <div className="mt-2 flex justify-between text-[10px] font-bold text-muted-foreground">
-            <span>A1</span><span>A2</span><span>B1</span><span>B2</span>
-          </div>
-          <p className="mt-4 rounded-xl p-2.5 text-sm font-bold" style={{ backgroundColor: "#FEF9C3", color: "#854D0E" }}>
-            League: {profile?.league ?? "Bronze"}
-          </p>
-        </section>
+        <div className="grid gap-5 md:grid-cols-2">
+          <section className="rounded-2xl bg-white p-5 shadow-sm">
+            <h2 style={{ fontSize: 16, fontWeight: 700 }} className="mb-3">CEFR Level: {level}</h2>
+            <StrengthBar value={levelValue} />
+            <div className="mt-2 flex justify-between text-[10px] font-bold text-muted-foreground">
+              <span>A1</span><span>A2</span><span>B1</span><span>B2</span>
+            </div>
+            <p className="mt-4 rounded-xl p-2.5 text-sm font-bold" style={{ backgroundColor: "#FEF9C3", color: "#854D0E" }}>
+              League: {profile?.league ?? "Bronze"}
+            </p>
+          </section>
 
-        <MemorySnapshot concepts={concepts} />
+          <MemorySnapshot concepts={concepts} />
 
-        <section className="mb-5 rounded-2xl bg-white p-5 shadow-sm" style={{ height: 240 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700 }} className="mb-3">Weekly XP</h2>
-          <ResponsiveContainer width="100%" height="80%">
-            <BarChart data={chart}>
-              <XAxis dataKey="day" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip />
-              <Bar dataKey="xp" fill="#58CC02" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </section>
+          <section className="rounded-2xl bg-white p-5 shadow-sm md:col-span-2" style={{ height: 260 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700 }} className="mb-3">Weekly XP</h2>
+            <ResponsiveContainer width="100%" height="82%">
+              <BarChart data={chart}>
+                <XAxis dataKey="day" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Bar dataKey="xp" fill="#58CC02" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </section>
 
-        <section className="mb-5 grid gap-3">
           <List title="Strongest words" rows={strongest} />
           <List title="Weakest words" rows={weakest} />
-        </section>
+        </div>
 
-        <Button variant="outline" onClick={signOut} className="w-full">Sign Out</Button>
+        <Button variant="outline" onClick={signOut} className="mt-5 w-full md:w-auto md:px-8">Sign Out</Button>
       </div>
     </main>
   );
