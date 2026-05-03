@@ -162,7 +162,7 @@ export default function Home() {
         </h2>
 
         {/* Unit list */}
-        <section className="grid gap-3">
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {query.data.units.map((unit) => {
             const strength = strengthByUnit.get(unit.id) ?? 0;
             const theme = themeFor(unit.topic);
