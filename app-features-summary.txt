@@ -1,0 +1,150 @@
+App Features and Architecture Summary
+======================================
+
+Overview
+--------
+- React + Vite SPA built with TypeScript.
+- Uses Supabase for authentication and data storage.
+- Uses React Query for remote data fetching and caching.
+- Uses Zustand for client-side state management for auth and lesson sessions.
+- Provides Spanish learning through lessons, flashcards, vocabulary review, and spaced memory practice.
+
+Main Routes / Pages
+-------------------
+- `/login`: Sign in or sign up. Uses Supabase email/password auth.
+- `/home`: Dashboard showing study units, progress, XP, streaks, and forgotten-word review prompts.
+- `/unit/:id`: Unit preview page showing unit concept cards and action buttons for lessons or flashcards.
+- `/lesson/:id`: Lesson flow or flashcard study session for a specific unit.
+- `/vocabulary`: Vocabulary library with filtering, search, sorting, and detail modal.
+- `/profile`: User profile page (protected route).
+
+Authentication & User State
+---------------------------
+- `src/stores/authStore.ts` manages `user`, `session`, `profile`, `loading`, and initialization.
+- `src/integrations/supabase/client.ts` creates the Supabase client using `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
+- `authStore` listens to Supabase auth state changes and calls `ensureProfile`.
+- `ensureProfile` in `src/lib/lingua.ts` creates a row in `user_profiles` if a user does not already exist.
+- `App.tsx` triggers auth init and protects routes behind `ProtectedRoute`.
+- Signup currently uses `supabase.auth.signUp` with `emailRedirectTo`.
+
+Lesson Data Layer
+-----------------
+- `src/services/lessonService.ts` contains reusable data functions:
+  - `fetchUnits()` - gets units from Supabase, fallback to JSON.
+  - `fetchConceptsByUnit(unitId)` - gets concepts for a unit, fallback to JSON.
+  - `fetchAllConcepts()` - loads all concepts for vocabulary and dashboard.
+  - `fetchUserMemory(userId)` - loads memory records from Supabase.
+  - `fetchLessonsData(userId)` - returns units, concepts, and memory.
+  - `fetchLessonData(unitId, userId)` - returns concepts and memory for a unit.
+- JSON fallback file is `public/spanish_concepts.json`.
+- This provides fallback if Supabase fails or returns empty results.
+
+Vocabulary Data Layer
+---------------------
+- `src/services/vocabService.ts` provides:
+  - `fetchVocabularyData(userId)` - loads all concepts and user memory, enriches concepts.
+  - `searchVocabulary()` - text search by Spanish or English.
+  - `filterByTopic()` - topic filtering and forgotten word filtering.
+  - `sortVocabulary()` - sort by due, weak, recent, az.
+  - `getVocabularyStats()` - computes learned, review, strong, forgotten statistics.
+  - `getTopics()` - extracts topic list from concepts.
+- `src/hooks/useVocabulary.ts` wraps the service in a React Query hook.
+
+Lesson Hooks and UI Fetching
+----------------------------
+- `src/hooks/useLessons.ts` contains:
+  - `useLessons(userId)` for home page lesson data.
+  - `useLesson(unitId, userId)` for lesson page concept data.
+  - `useUnits()` and `useUnitConcepts(unitId)` for unit-related queries.
+- These hooks centralize fetching and caching.
+
+Lesson Flow and Content
+-----------------------
+- `src/pages/Lesson.tsx` implements the study session.
+- It uses `useLessonStore` from `src/stores/lessonStore.ts` to manage:
+  - `exercises`, `currentIndex`, `hearts`, `wrongQueue`, `sessionType`.
+- Lesson session modes:
+  - `lesson` mode: mix of introduction, choice, translation, and speaking exercises.
+  - `flashcard` mode: flashcard-only review.
+- Exercise generation logic:
+  - Fresh concepts produce an intro plus follow-up exercise.
+  - Review concepts are selected by recall and adaptive weight.
+  - Flashcard mode selects up to 12 flashcards.
+- Answering updates memory with `updateMemory()` from `src/lib/lingua.ts`.
+- Session completion updates user profile XP, streaks, and inserts a `sessions` row.
+
+Memory & Spaced Review Logic
+----------------------------
+- `src/lib/lingua.ts` defines domain models and enrichment:
+  - `Concept`, `Memory`, `Profile`, `ConceptWithMemory`, `Unit`.
+  - `enrichConcepts(concepts, memories)` merges concepts and memory, computes recall score, review status, and days until review.
+  - `unitStrength()` computes strength per unit.
+  - `updateMemory()` recalculates half-life, recall, and adaptive weight and upserts user memory.
+- HLR logic is supported by `src/lib/hlr.ts`.
+
+Unit Preview and Flashcards
+---------------------------
+- `src/pages/UnitPreview.tsx` shows unit metadata and concept cards.
+- Concept cards can flip between Spanish and English.
+- Buttons allow starting either a regular lesson or flashcard mode.
+- This page loads unit metadata from `spanish_concepts.json` and lesson concepts from the service.
+
+Vocabulary UI
+--------------
+- `src/pages/Vocabulary.tsx` renders filtered/sorted vocabulary cards.
+- It uses `useVocabulary(user?.id)` and `VocabHelpers`.
+- Vocabulary cards open `VocabModal` with concept details.
+- Topics and search/filter controls are implemented in the page UI.
+
+Home Dashboard
+--------------
+- `src/pages/Home.tsx` displays:
+  - Words learned count.
+  - Day streak.
+  - Weekly XP.
+  - Unit cards with progress strength bars.
+  - Locking logic: units can lock if previous unit strength is below threshold.
+  - A forgotten-word alert button if low-recall words exist.
+
+Supabase Integration
+--------------------
+- `src/integrations/supabase/client.ts` creates the Supabase client.
+- `src/stores/authStore.ts`, `src/services/lessonService.ts`, `src/services/vocabService.ts`, and `src/lib/lingua.ts` all use the client.
+- Authentication is based on Supabase auth.
+- Data tables referenced include:
+  - `units`, `concepts`, `user_memory`, `user_profiles`, `sessions`.
+
+Current App Behavior Summary
+----------------------------
+- User signs in or creates an account.
+- Auth state is initialized, and user profile is ensured.
+- Home fetches units and concepts plus the user’s memory.
+- Unit preview shows vocabulary in the selected unit.
+- The lesson page builds a study session based on new and review words.
+- Vocabulary page shows the full concept library, enriched with memory.
+- If Supabase fetching fails or returns no rows, JSON file fallback is used.
+
+Potential Fix Targets
+---------------------
+- Login/signup currently calls `supabase.auth.signUp` with `emailRedirectTo`, which may trigger email verification flow.
+- `UnitPreview.tsx` loads unit metadata only from JSON and not from Supabase units.
+- `Lesson.tsx` uses session state and may depend on `query.data?.concepts` before exercises are built.
+- `fetchLessonData` and `fetchLessonsData` rely on `unit_id` and Supabase schema names.
+
+Key Files
+---------
+- `src/App.tsx`
+- `src/pages/Login.tsx`
+- `src/pages/Home.tsx`
+- `src/pages/UnitPreview.tsx`
+- `src/pages/Lesson.tsx`
+- `src/pages/Vocabulary.tsx`
+- `src/stores/authStore.ts`
+- `src/stores/lessonStore.ts`
+- `src/hooks/useLessons.ts`
+- `src/hooks/useVocabulary.ts`
+- `src/services/lessonService.ts`
+- `src/services/vocabService.ts`
+- `src/lib/lingua.ts`
+- `src/integrations/supabase/client.ts`
+- `public/spanish_concepts.json`
