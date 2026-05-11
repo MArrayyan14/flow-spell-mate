@@ -157,13 +157,48 @@ export async function fetchLessonsData(userId: string) {
 }
 
 /**
- * Get lesson content for a specific unit with enriched data
+ * Determine the maximum difficulty level a user can see based on XP.
+ * <100 → 1; <300 → 2; <700 → 3; ≥700 → 4
+ */
+export function maxDifficultyForXP(xp: number): number {
+  if (xp < 100) return 1;
+  if (xp < 300) return 2;
+  if (xp < 700) return 3;
+  return 4;
+}
+
+/**
+ * Filter + sort concepts by user's XP-based difficulty band.
+ * Within each allowed difficulty band, sort by base_weight DESC.
+ */
+export function filterConceptsByDifficulty<T extends { difficulty_level: number; base_weight: number }>(
+  concepts: T[],
+  xpTotal: number
+): T[] {
+  const maxDiff = maxDifficultyForXP(xpTotal);
+  return [...concepts]
+    .filter((c) => (c.difficulty_level ?? 1) <= maxDiff)
+    .sort((a, b) => {
+      const da = a.difficulty_level ?? 1;
+      const db = b.difficulty_level ?? 1;
+      if (da !== db) return da - db;
+      return (b.base_weight ?? 0) - (a.base_weight ?? 0);
+    });
+}
+
+/**
+ * Get lesson content for a specific unit with enriched data,
+ * filtered by the user's current XP-based difficulty band.
  */
 export async function fetchLessonData(unitId: number, userId: string) {
-  const [concepts, memory] = await Promise.all([
+  const [concepts, memory, profileRes] = await Promise.all([
     fetchConceptsByUnit(unitId),
     fetchUserMemory(userId),
+    supabase.from("user_profiles").select("xp_total").eq("id", userId).maybeSingle(),
   ]);
-  
-  return { concepts, memories: memory };
+
+  const xpTotal = (profileRes.data as any)?.xp_total ?? 0;
+  const filtered = filterConceptsByDifficulty(concepts, xpTotal);
+
+  return { concepts: filtered, memories: memory };
 }
