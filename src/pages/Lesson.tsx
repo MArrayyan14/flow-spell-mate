@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { X, Volume2, Heart, Zap } from "lucide-react";
+import { X, Volume2, Heart, Zap, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { speakSpanish, updateMemory, type ConceptWithMemory } from "@/lib/lingua";
@@ -11,7 +11,7 @@ import { useLesson } from "@/hooks/useLessons";
 import TranslationInput from "@/components/lingua/TranslationInput";
 import SpeakingExercise from "@/components/lingua/SpeakingExercise";
 import ChoiceExercise from "@/components/lingua/ChoiceExercise";
-import WrongAnswerSheet from "@/components/lingua/WrongAnswerSheet";
+
 import CompletionScreen from "@/components/lingua/CompletionScreen";
 
 const ADVANCE_DELAY_MS = 1500;
@@ -27,13 +27,13 @@ export default function Lesson() {
   const [flipped, setFlipped] = useState(false);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [complete, setComplete] = useState(false);
-  const [wrongSheet, setWrongSheet] = useState<{ open: boolean; prompt: string; answer: string }>({
-    open: false,
-    prompt: "",
-    answer: "",
-  });
+  const [feedbackState, setFeedbackState] = useState<"idle" | "correct" | "incorrect">("idle");
   const [newWordsCount, setNewWordsCount] = useState(0);
   const [earnedXp, setEarnedXp] = useState(0);
+  // True when a speaking exercise was answered via the text-typing fallback.
+  // In that case the user answered in English, so the correct answer shown
+  // in FeedbackFooter must also be the English translation, not the Spanish word.
+  const [speakingUsedTyping, setSpeakingUsedTyping] = useState(false);
 
   const query = useLesson(id, user?.id);
 
@@ -72,22 +72,19 @@ export default function Lesson() {
     await updateMemory(exercise.concept, isCorrect, exercise.concept.memory, user.id);
     if (!isCorrect) {
       store.addWrong(exercise);
-      setWrongSheet({
-        open: true,
-        prompt: exercise.concept.surface_form,
-        answer: exercise.concept.translation,
-      });
+      setCorrectStreak(0);
     } else {
       const next = correctStreak + 1;
       setCorrectStreak(next);
       if (next % 4 === 0) store.reinsertWrong();
     }
-    window.setTimeout(() => nextStep(), isCorrect ? 900 : ADVANCE_DELAY_MS + 600);
+    setFeedbackState(isCorrect ? "correct" : "incorrect");
   };
 
   const nextStep = () => {
     setFlipped(false);
-    setWrongSheet((s) => ({ ...s, open: false }));
+    setFeedbackState("idle");
+    setSpeakingUsedTyping(false);
     if (store.currentIndex + 1 >= store.exercises.length) completeSession();
     else store.next();
   };
@@ -146,7 +143,7 @@ export default function Lesson() {
       <div className="mx-auto w-full px-4 pt-4 pb-10" style={{ maxWidth: 480 }}>
         <header className="mb-6 flex items-center gap-3">
           <button
-            onClick={() => confirm("Exit lesson?") && navigate(`/unit/${id}`)}
+            onClick={() => confirm("Exit lesson?") && navigate(`/home`)}
             className="grid h-9 w-9 place-items-center rounded-full text-[#999] transition hover:bg-muted"
             aria-label="Exit lesson"
           >
@@ -186,6 +183,7 @@ export default function Lesson() {
           {exercise.type === "translation" && (
             <TranslationInput
               prompt={exercise.concept.translation}
+              disabled={feedbackState !== "idle"}
               onSubmit={(value) =>
                 finishAnswer(
                   normalize(value) === normalize(exercise.concept.surface_form) ||
@@ -203,7 +201,15 @@ export default function Lesson() {
             />
           )}
           {exercise.type === "speaking" && (
-            <SpeakingExercise target={exercise.concept.surface_form} onAnswer={finishAnswer} />
+            <SpeakingExercise
+              target={exercise.concept.surface_form}
+              meaning={exercise.concept.translation}
+              onAnswer={finishAnswer}
+              onAnswerTyped={(correct) => {
+                setSpeakingUsedTyping(true);
+                finishAnswer(correct);
+              }}
+            />
           )}
         </section>
 
@@ -224,13 +230,66 @@ export default function Lesson() {
         </div>
       </div>
 
-      <WrongAnswerSheet
-        open={wrongSheet.open}
-        prompt={wrongSheet.prompt}
-        correctAnswer={wrongSheet.answer}
-        onDismiss={() => setWrongSheet((s) => ({ ...s, open: false }))}
+      <FeedbackFooter
+        state={feedbackState}
+        correctAnswer={
+          speakingUsedTyping
+            ? exercise?.concept.translation   // user typed English → show English
+            : exercise?.concept.surface_form  // all other cases → show Spanish
+        }
+        onContinue={nextStep}
       />
     </main>
+  );
+}
+
+function FeedbackFooter({
+  state,
+  correctAnswer,
+  onContinue,
+}: {
+  state: "idle" | "correct" | "incorrect";
+  correctAnswer?: string;
+  onContinue: () => void;
+}) {
+  if (state === "idle") return null;
+  const isCorrect = state === "correct";
+  const bg = isCorrect ? "#d7ffb8" : "#ffdfe0";
+  const color = isCorrect ? "#58a700" : "#ea2b2b";
+  const btnBg = isCorrect ? "#58CC02" : "#FF4B4B";
+
+  return (
+    <div
+      className="fixed bottom-0 left-0 w-full animate-in slide-in-from-bottom-2 p-4 md:p-6"
+      style={{ backgroundColor: bg, color: color, zIndex: 50, borderTop: `2px solid ${isCorrect ? '#bbf786' : '#fca5a5'}` }}
+    >
+      <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white"
+            style={{ color: color }}
+          >
+            {isCorrect ? <Check size={24} strokeWidth={3} /> : <X size={24} strokeWidth={3} />}
+          </div>
+          <div>
+            <h2 className="text-xl font-bold md:text-2xl">
+              {isCorrect ? "Awesome!" : "Correct solution:"}
+            </h2>
+            {!isCorrect && correctAnswer && (
+              <p className="text-sm font-semibold text-[#1a1a1a] md:text-base">{correctAnswer}</p>
+            )}
+          </div>
+        </div>
+        <button
+          onClick={onContinue}
+          autoFocus
+          className="w-full shrink-0 rounded-xl p-3 text-base font-bold text-white shadow-sm transition active:scale-95 sm:w-36 md:p-4 md:text-lg"
+          style={{ backgroundColor: btnBg }}
+        >
+          Continue
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -256,6 +315,11 @@ function levenshteinClose(a: string, b: string) {
   return dp[y.length] <= 1;
 }
 
+function getRandomExerciseType(): "choice" | "translation" | "speaking" {
+  const types: ("choice" | "translation" | "speaking")[] = ["choice", "translation", "speaking"];
+  return types[Math.floor(Math.random() * types.length)];
+}
+
 /**
  * Build exercise sequence and ensure introduce → quiz of same concept
  * is separated by at least 2 other exercises (target gap of 3 indices).
@@ -272,36 +336,53 @@ function makeExercises(
       concept: c,
     }));
 
-  const news = concepts.filter((c) => (c.memory?.attempts ?? 0) === 0).slice(0, 3);
+  // 1. Shuffle and pick up to 3 random new concepts (attempts === 0)
+  const potentialNews = concepts.filter((c) => (c.memory?.attempts ?? 0) === 0);
+  const news = [...potentialNews].sort(() => Math.random() - 0.5).slice(0, 3);
+
+  // 2. Identify weak review words
   const reviews = concepts
     .filter((c) => (c.memory?.attempts ?? 0) > 0 && c.recall < 0.6)
     .sort(
       (a, b) =>
         ((b.memory?.adaptive_weight ?? 1) * (1 - b.recall)) -
         ((a.memory?.adaptive_weight ?? 1) * (1 - a.recall))
-    )
-    .slice(0, 8);
+    );
 
-  const base = [...news, ...(reviews.length ? reviews : concepts)].slice(0, 10);
+  // 3. Backfill with random other concepts if reviews are fewer than 8
+  let finalReviews = [...reviews];
+  if (finalReviews.length < 8) {
+    const chosenIds = new Set([...news, ...finalReviews].map((c) => c.concept_id));
+    const paddingPool = concepts.filter((c) => !chosenIds.has(c.concept_id));
+    const randomPadding = [...paddingPool]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 8 - finalReviews.length);
+    finalReviews = [...finalReviews, ...randomPadding];
+  }
 
-  const initial: Exercise[] = base.flatMap((c, i) =>
-    (c.memory?.attempts ?? 0) === 0
+  // Combine into base pool of 10 concepts for the study session
+  const base = [...news, ...finalReviews].slice(0, 10);
+
+  // 4. Map to dynamic exercises with randomized question types
+  const initial: Exercise[] = base.flatMap((c, i) => {
+    const randomSuffix = Math.random().toString(36).substring(2, 6);
+    return (c.memory?.attempts ?? 0) === 0
       ? [
-          { id: `i-${i}`, type: "introduce", concept: c },
+          { id: `i-${i}-${randomSuffix}`, type: "introduce", concept: c },
           {
-            id: `q-${i}`,
-            type: i % 3 === 0 ? "speaking" : i % 2 ? "translation" : "choice",
+            id: `q-${i}-${randomSuffix}`,
+            type: getRandomExerciseType(),
             concept: c,
           },
         ]
       : [
           {
-            id: `r-${i}`,
-            type: i % 3 === 0 ? "speaking" : i % 2 ? "translation" : "choice",
+            id: `r-${i}-${randomSuffix}`,
+            type: getRandomExerciseType(),
             concept: c,
           },
-        ]
-  ).slice(0, 15) as Exercise[];
+        ];
+  }).slice(0, 15) as Exercise[];
 
   return spaceIntroducedQuizzes(initial, 3);
 }
@@ -342,9 +423,15 @@ function spaceIntroducedQuizzes(list: Exercise[], gap: number): Exercise[] {
 }
 
 function makeOptions(c: ConceptWithMemory, all: ConceptWithMemory[]) {
+  const distractors = all.filter((x) => x.concept_id !== c.concept_id);
+  // Shuffle all distractors and take 3 random ones
+  const randomDistractors = [...distractors]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3);
+
   return [
     c.translation,
-    ...all.filter((x) => x.concept_id !== c.concept_id).slice(0, 3).map((x) => x.translation),
+    ...randomDistractors.map((x) => x.translation),
   ].sort(() => Math.random() - 0.5);
 }
 

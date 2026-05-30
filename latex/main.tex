@@ -1,0 +1,244 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+\setlist{nosep}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{1.5cm}
+{\Large\bfseries Flow Spell Mate: A Duolingo-Style Spanish Language Learning Application\par}
+\vspace{1cm}
+{\large Academic Technical Report\par}
+\vspace{1.5cm}
+{\normalsize Prepared for: Information Technology Application Project\par}
+\vspace{0.5cm}
+{\normalsize Prepared by: Usman\par}
+\vfill
+{\normalsize \today\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Flow Spell Mate is a web-based Spanish language learning application inspired by modern mobile-assisted language learning platforms such as Duolingo. The system provides lesson-based learning, flashcards, vocabulary review, gradual difficulty progression, spaced repetition, memory prediction, and analytics dashboards. It is implemented as a React and TypeScript single-page application with Supabase-backed authentication and storage.
+
+Language learning applications are useful because they support frequent, short practice sessions, immediate feedback, and flexible access outside formal classrooms. Research on mobile-assisted language learning shows that mobile tools can improve vocabulary learning, motivation, and learner autonomy when designed around clear tasks and repeated practice \cite{burston2015,stockwell2010}. The objective of this project was to design and implement an interactive Spanish learning system that combines usable interface design, structured vocabulary learning, spaced memory review, and progress analytics to support beginner learners.
+
+\section{UI and Design Decisions}
+
+\subsection{Look and Feel}
+
+The application uses a minimal, welcoming interface with clear lesson cards, progress indicators, flashcard views, and dashboard summaries. The visual style emphasizes readability, low-friction interaction, and motivational feedback. In educational applications, perceived visual attractiveness can influence users' initial trust and willingness to continue using a system \cite{hartmann2007}. Similarly, usability and visual clarity are important in learning environments because poor interface design can distract learners from the instructional task \cite{nielsen1994}.
+
+The color palette and layout were chosen to support engagement without overwhelming the learner. Game-inspired features such as streaks, progress bars, XP, and unit completion indicators reflect common gamification patterns in digital learning. Prior research suggests that gamification can increase motivation when it provides meaningful goals, feedback, and a sense of progression rather than superficial rewards alone \cite{deterding2011,hamari2014}. This design is suitable for a broad learner demographic because it avoids dense academic presentation and instead supports quick practice, visual scanning, and repeated use.
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.78\linewidth}{Home dashboard screenshot placeholder}}
+\caption{Minimal dashboard with progress, streaks, units, and review prompts.}
+\label{fig:home}
+\end{figure}
+
+\section{Choice of Language: Why Spanish}
+
+Spanish was selected because it is one of the world's most widely spoken languages and has strong educational, cultural, and professional relevance. According to Ethnologue, Spanish has hundreds of millions of speakers worldwide and is used across Europe, Latin America, North America, and international business contexts \cite{ethnologue2024}. For English-speaking learners, Spanish is also commonly selected because of its global usefulness, accessible learning resources, and practical value in travel, employment, healthcare, education, and public service.
+
+Learning Spanish also supports broader cognitive and communicative development associated with second-language acquisition. Research on bilingualism and second-language learning suggests benefits in metalinguistic awareness, executive control, and intercultural competence, although effects vary by age, proficiency, and learning context \cite{bialystok2001,ellis2008}. Therefore, Spanish was an appropriate language choice for a beginner-focused educational application because it combines global demand with strong practical and academic justification.
+
+\section{Specific Components}
+
+\subsection{Home Page Simplicity and Attractiveness}
+
+The home page was designed to be simple, direct, and welcoming. It displays the learner's current progress, streak, XP, available units, and review needs. This supports onboarding by allowing users to understand what to do next without reading instructions. First impressions are especially important in digital products because users often make rapid judgments about credibility and usability \cite{lindgaard2006}. For educational software, this matters because confusion at the first screen can reduce motivation before learning begins.
+
+The dashboard also uses visible progress signals. Progress indicators can support self-regulated learning by helping learners monitor achievement and identify next actions \cite{zimmerman2002}. In Flow Spell Mate, the home page therefore acts as both an entry point and a learning control center.
+
+\subsection{Cognitive Load and Simplicity of Navigation}
+
+Navigation was kept simple to reduce extraneous cognitive load. Cognitive load theory distinguishes between intrinsic task difficulty, germane learning effort, and extraneous load caused by poor presentation \cite{sweller1988}. In a vocabulary learning application, the learner's attention should remain on meaning, recall, spelling, and usage rather than on interface discovery.
+
+The application uses predictable routes such as home, lesson, unit preview, vocabulary, and profile. This structure follows usability principles of consistency, recognition, and user control \cite{nielsen1994}. Simple navigation also reduces frustration and supports repeated short sessions, which are important for spaced practice.
+
+\subsection{Grouping of Words}
+
+Vocabulary is grouped by semantic categories and lesson units. Grouping helps learners build conceptual relationships between words and supports organized retrieval. Research in vocabulary acquisition shows that word learning is influenced by semantic association, context, and repeated exposure \cite{nation2001}. However, semantic clustering can sometimes create interference when many closely related new words are introduced together, particularly for beginners \cite{tinkham1993,waring1997}. 
+
+To address this, the project uses grouped vocabulary but combines it with gradual progression and review. Categories provide structure, while the spaced repetition system helps reinforce individual word memory over time.
+
+\begin{table}[h]
+\centering
+\caption{Vocabulary grouping design}
+\begin{tabular}{p{0.28\linewidth}p{0.58\linewidth}}
+\toprule
+Design choice & Educational purpose \\
+\midrule
+Concept-based units & Organize vocabulary into meaningful learning blocks. \\
+Flashcards & Support active recall and quick review. \\
+Search and filtering & Help learners revisit specific categories or weak words. \\
+Forgotten-word review & Prioritize vocabulary with low recall strength. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Gradual Increase in Difficulty}
+
+The application supports beginner-to-intermediate progression through units, lesson sequencing, and adaptive review. Easier words and introductory exercises appear before more demanding recall tasks. This reflects scaffolding theory, where learners are supported early and gradually given more independent tasks as competence increases \cite{wood1976}. In second-language learning, comprehensible input and progressive challenge are important because learners benefit when material is slightly above their current ability but still understandable \cite{krashen1982}.
+
+The lesson flow includes introductions, multiple-choice tasks, translation input, speaking-style exercises, and flashcard review. This progression allows learners to move from recognition to recall and production.
+
+\subsection{Half-Life Memory Prediction Algorithm}
+
+Flow Spell Mate uses a spaced repetition and half-life memory prediction approach to estimate how strongly each word is remembered. The idea is based on the forgetting curve, originally described by Ebbinghaus, which shows that memory strength decreases over time without review \cite{ebbinghaus1885}. Spaced repetition systems schedule review before memory is likely to fail, improving long-term retention compared with massed practice \cite{cepeda2006}.
+
+The project follows the principle of Half-Life Regression, a model popularized in Duolingo research for predicting the half-life of a learner's memory for a specific item \cite{settles2016}. Each review updates memory strength using learner performance, time since last review, and adaptive weight. This allows the app to prioritize weak or forgotten vocabulary.
+
+Modern alternatives include SuperMemo-style algorithms, Bayesian memory models, and Free Spaced Repetition Scheduler (FSRS), which use more detailed stability and difficulty estimates \cite{wozniak1990,mai2022}. However, Half-Life Regression is appropriate for this project because it is interpretable, lightweight, and directly aligned with vocabulary recall prediction.
+
+\begin{table}[h]
+\centering
+\caption{Comparison of spaced repetition approaches}
+\begin{tabular}{p{0.25\linewidth}p{0.33\linewidth}p{0.28\linewidth}}
+\toprule
+Approach & Strength & Limitation \\
+\midrule
+Forgetting curve & Simple memory decay model & Limited personalization. \\
+Half-Life Regression & Predicts item-level recall over time & Requires review history. \\
+SuperMemo/SM-2 & Proven scheduling foundation & Less flexible for modern analytics. \\
+FSRS & Modern adaptive scheduling & More complex to implement. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Analytics Dashboard}
+
+The analytics dashboard helps learners and instructors understand progress at both group and word levels. Learning analytics research emphasizes the value of collecting and visualizing learner data to support reflection, feedback, and timely intervention \cite{siemens2011,verbert2013}. In Flow Spell Mate, analytics are designed to be actionable rather than decorative.
+
+\subsection{By Group Analytics}
+
+Group analytics show performance by unit, category, or lesson group. These metrics include unit strength, completion progress, review needs, and weak categories. This helps learners decide which topic to study next and supports adaptive lesson locking when earlier units are not yet strong enough.
+
+\subsection{By Word Analytics}
+
+Word-level analytics include accuracy, recall score, review status, and hardest or easiest vocabulary. This is useful because vocabulary learning is item-specific: a learner may know one group generally but still struggle with particular words. The application therefore enriches vocabulary records with memory data so that weak words can be reviewed more often.
+
+\subsection{Visualizations Used}
+
+The dashboard uses progress indicators, bar-style strength displays, category summaries, and review prompts. Future versions may include pie charts for mastered versus weak words, trend graphs for weekly progress, and comparison charts across categories. Effective dashboard design should make important information visible, reduce unnecessary visual complexity, and connect analytics to learner action \cite{few2006,verbert2013}.
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.8\linewidth}{Analytics dashboard screenshot placeholder}}
+\caption{Performance analytics view showing vocabulary strength and review needs.}
+\label{fig:analytics}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.8\linewidth}{Word-level recall chart placeholder}}
+\caption{Word-level analytics for accuracy, recall rate, and difficult vocabulary.}
+\label{fig:wordanalytics}
+\end{figure}
+
+\section{Proposed Improvements}
+
+Several improvements can extend the educational value of the application. First, pronunciation and audio support would improve listening and speaking practice. Second, AI conversation practice could provide contextual dialogue tasks and personalized feedback. Third, recommendation models could select lessons based on learner goals, weak categories, and review history. Fourth, adaptive difficulty can be improved by incorporating richer memory models such as FSRS. Finally, gamification can be expanded with achievements, social learning, and challenge modes, provided these features remain connected to learning outcomes.
+
+\section{Conclusion}
+
+Flow Spell Mate is a Spanish language learning application that combines lesson-based learning, flashcards, vocabulary organization, spaced repetition, and analytics. The project applies principles from HCI, cognitive load theory, second-language acquisition, and memory research to create a usable and educationally meaningful system. Its main achievement is the integration of structured vocabulary learning with adaptive memory review and learner-facing progress feedback. The result is a practical foundation for a scalable language learning platform.
+
+\begin{thebibliography}{99}
+
+\bibitem{burston2015}
+J. Burston, ``Twenty years of MALL project implementation: A meta-analysis of learning outcomes,'' \emph{ReCALL}, vol. 27, no. 1, pp. 4--20, 2015.
+
+\bibitem{stockwell2010}
+G. Stockwell, ``Using mobile phones for vocabulary activities: Examining the effect of the platform,'' \emph{Language Learning \& Technology}, vol. 14, no. 2, pp. 95--110, 2010.
+
+\bibitem{hartmann2007}
+J. Hartmann, A. Sutcliffe, and A. De Angeli, ``Investigating attractiveness in web user interfaces,'' in \emph{Proc. SIGCHI Conf. Human Factors in Computing Systems}, 2007, pp. 387--396.
+
+\bibitem{nielsen1994}
+J. Nielsen, \emph{Usability Engineering}. San Francisco, CA, USA: Morgan Kaufmann, 1994.
+
+\bibitem{deterding2011}
+S. Deterding, D. Dixon, R. Khaled, and L. Nacke, ``From game design elements to gamefulness: Defining gamification,'' in \emph{Proc. MindTrek}, 2011, pp. 9--15.
+
+\bibitem{hamari2014}
+J. Hamari, J. Koivisto, and H. Sarsa, ``Does gamification work? A literature review of empirical studies on gamification,'' in \emph{Proc. 47th Hawaii Int. Conf. System Sciences}, 2014, pp. 3025--3034.
+
+\bibitem{ethnologue2024}
+D. M. Eberhard, G. F. Simons, and C. D. Fennig, Eds., \emph{Ethnologue: Languages of the World}, 27th ed. Dallas, TX, USA: SIL International, 2024.
+
+\bibitem{bialystok2001}
+E. Bialystok, \emph{Bilingualism in Development: Language, Literacy, and Cognition}. Cambridge, U.K.: Cambridge University Press, 2001.
+
+\bibitem{ellis2008}
+R. Ellis, \emph{The Study of Second Language Acquisition}, 2nd ed. Oxford, U.K.: Oxford University Press, 2008.
+
+\bibitem{lindgaard2006}
+G. Lindgaard, G. Fernandes, C. Dudek, and J. Brown, ``Attention web designers: You have 50 milliseconds to make a good first impression,'' \emph{Behaviour \& Information Technology}, vol. 25, no. 2, pp. 115--126, 2006.
+
+\bibitem{zimmerman2002}
+B. J. Zimmerman, ``Becoming a self-regulated learner: An overview,'' \emph{Theory Into Practice}, vol. 41, no. 2, pp. 64--70, 2002.
+
+\bibitem{sweller1988}
+J. Sweller, ``Cognitive load during problem solving: Effects on learning,'' \emph{Cognitive Science}, vol. 12, no. 2, pp. 257--285, 1988.
+
+\bibitem{nation2001}
+I. S. P. Nation, \emph{Learning Vocabulary in Another Language}. Cambridge, U.K.: Cambridge University Press, 2001.
+
+\bibitem{tinkham1993}
+T. Tinkham, ``The effect of semantic clustering on the learning of second language vocabulary,'' \emph{System}, vol. 21, no. 3, pp. 371--380, 1993.
+
+\bibitem{waring1997}
+R. Waring, ``The negative effects of learning words in semantic sets: A replication,'' \emph{System}, vol. 25, no. 2, pp. 261--274, 1997.
+
+\bibitem{wood1976}
+D. Wood, J. S. Bruner, and G. Ross, ``The role of tutoring in problem solving,'' \emph{Journal of Child Psychology and Psychiatry}, vol. 17, no. 2, pp. 89--100, 1976.
+
+\bibitem{krashen1982}
+S. D. Krashen, \emph{Principles and Practice in Second Language Acquisition}. Oxford, U.K.: Pergamon Press, 1982.
+
+\bibitem{ebbinghaus1885}
+H. Ebbinghaus, \emph{Memory: A Contribution to Experimental Psychology}. New York, NY, USA: Teachers College, Columbia University, 1913. Original work published 1885.
+
+\bibitem{cepeda2006}
+N. J. Cepeda, H. Pashler, E. Vul, J. T. Wixted, and D. Rohrer, ``Distributed practice in verbal recall tasks: A review and quantitative synthesis,'' \emph{Psychological Bulletin}, vol. 132, no. 3, pp. 354--380, 2006.
+
+\bibitem{settles2016}
+B. Settles and B. Meeder, ``A trainable spaced repetition model for language learning,'' in \emph{Proc. 54th Annual Meeting of the Association for Computational Linguistics}, 2016, pp. 1848--1858.
+
+\bibitem{wozniak1990}
+P. A. Wozniak and E. J. Gorzelanczyk, ``Optimization of repetition spacing in the practice of learning,'' \emph{Acta Neurobiologiae Experimentalis}, vol. 54, no. 1, pp. 59--62, 1994.
+
+\bibitem{mai2022}
+J. Mai, ``FSRS: A modern spaced repetition scheduler based on memory stability and difficulty,'' 2022. [Online]. Available: \url{https://github.com/open-spaced-repetition/fsrs4anki}
+
+\bibitem{siemens2011}
+G. Siemens and P. Long, ``Penetrating the fog: Analytics in learning and education,'' \emph{EDUCAUSE Review}, vol. 46, no. 5, pp. 30--40, 2011.
+
+\bibitem{verbert2013}
+K. Verbert, E. Duval, J. Klerkx, S. Govaerts, and J. L. Santos, ``Learning analytics dashboard applications,'' \emph{American Behavioral Scientist}, vol. 57, no. 10, pp. 1500--1509, 2013.
+
+\bibitem{few2006}
+S. Few, \emph{Information Dashboard Design: The Effective Visual Communication of Data}. Sebastopol, CA, USA: O'Reilly Media, 2006.
+
+\end{thebibliography}
+
+\end{document}

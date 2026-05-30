@@ -65,13 +65,27 @@ export function getDaysUntilThreshold(
 
 export function getStatus(
   attempts: number,
-  recallProb: number
+  recallProb: number,
+  halfLife: number
 ): 'new' | 'strong' | 'fading' | 'weak' | 'forgotten' {
   if (attempts === 0) return 'new'
-  if (recallProb >= 0.9) return 'strong'
-  if (recallProb >= 0.6) return 'fading'
-  if (recallProb >= 0.4) return 'weak'
-  return 'forgotten'
+  
+  let rawStatus: 'strong' | 'fading' | 'weak' | 'forgotten' = 'forgotten'
+  if (recallProb >= 0.9) rawStatus = 'strong'
+  else if (recallProb >= 0.6) rawStatus = 'fading'
+  else if (recallProb >= 0.4) rawStatus = 'weak'
+
+  if (halfLife < 7) {
+    if (rawStatus === 'strong' || rawStatus === 'fading') {
+      return 'weak'
+    }
+  } else if (halfLife < 14) {
+    if (rawStatus === 'strong') {
+      return 'fading'
+    }
+  }
+
+  return rawStatus
 }
 
 export function computeAdaptiveWeight(

@@ -17,19 +17,14 @@ const STAT_COLORS = {
 
 const BADGE_STYLES: Record<string, { bg: string; fg: string; label: string }> = {
   strong:    { bg: "#DCFCE7", fg: "#166534", label: "Strong" },
-  fading:    { bg: "#FEF9C3", fg: "#854D0E", label: "Fading" },
+  fading:    { bg: "#FEF9C3", fg: "#854D0E", label: "Moderate" },
   weak:      { bg: "#FFEDD5", fg: "#9A3412", label: "Weak" },
   forgotten: { bg: "#FEE2E2", fg: "#991B1B", label: "Forgotten" },
   new:       { bg: "#DBEAFE", fg: "#1E40AF", label: "New" },
 };
 
 function badgeFor(c: ConceptWithMemory) {
-  const attempts = c.memory?.attempts ?? 0;
-  if (attempts === 0) return BADGE_STYLES.new;
-  if (c.recall < 0.4) return BADGE_STYLES.forgotten;
-  if (c.recall < 0.6) return BADGE_STYLES.weak;
-  if (c.recall < 0.8) return BADGE_STYLES.fading;
-  return BADGE_STYLES.strong;
+  return BADGE_STYLES[c.status] || BADGE_STYLES.new;
 }
 
 export default function Vocabulary() {
@@ -59,9 +54,9 @@ export default function Vocabulary() {
 
   const stats = [
     { label: "Learned", value: learned.length, color: STAT_COLORS.green },
-    { label: "Review", value: learned.filter((c) => c.recall < 0.6).length, color: STAT_COLORS.orange },
-    { label: "Strong", value: learned.filter((c) => c.recall >= 0.9).length, color: STAT_COLORS.blue },
-    { label: "Forgotten", value: learned.filter((c) => c.recall < 0.4).length, color: STAT_COLORS.red },
+    { label: "Review", value: learned.filter((c) => c.status === "fading" || c.status === "weak").length, color: STAT_COLORS.orange },
+    { label: "Strong", value: learned.filter((c) => c.status === "strong").length, color: STAT_COLORS.blue },
+    { label: "Forgotten", value: learned.filter((c) => c.status === "forgotten").length, color: STAT_COLORS.red },
   ];
 
   return (

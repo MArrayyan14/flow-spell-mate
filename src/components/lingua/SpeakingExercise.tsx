@@ -6,7 +6,10 @@ import { isCloseEnough } from "@/lib/lingua";
 
 type Props = {
   target: string;
+  meaning: string;
   onAnswer: (correct: boolean) => void;
+  /** Called instead of onAnswer when the user submits via the text fallback. */
+  onAnswerTyped?: (correct: boolean) => void;
 };
 
 /**
@@ -15,12 +18,13 @@ type Props = {
  * - 5 second auto-stop with text fallback
  * - 300ms settle delay before submitting result
  */
-export default function SpeakingExercise({ target, onAnswer }: Props) {
+export default function SpeakingExercise({ target, meaning, onAnswer, onAnswerTyped }: Props) {
   const recRef = useRef<any>(null);
   const timeoutRef = useRef<number | null>(null);
   const settledRef = useRef(false);
   const [recording, setRecording] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
+  const [typeInstead, setTypeInstead] = useState(false);
 
   const SR =
     typeof window !== "undefined" &&
@@ -48,6 +52,7 @@ export default function SpeakingExercise({ target, onAnswer }: Props) {
     settledRef.current = false;
     setShowFallback(false);
     setRecording(false);
+    setTypeInstead(false);
   }, [target]);
 
   const start = () => {
@@ -84,18 +89,66 @@ export default function SpeakingExercise({ target, onAnswer }: Props) {
     }, 5000);
   };
 
-  if (!SR || showFallback) {
+  if (!SR || typeInstead) {
     return (
       <div className="grid gap-4">
-        {showFallback && (
+        {typeInstead && (
           <p className="rounded-2xl bg-muted p-3 text-center font-bold text-muted-foreground">
             Couldn't hear you — try typing instead
           </p>
         )}
         <TranslationInput
           prompt={target}
-          onSubmit={(v) => onAnswer(isCloseEnough(v, target))}
+          label="Translate this to English:"
+          placeholder="Type the English meaning"
+          onSubmit={(v) => {
+            const correct = isCloseEnough(v, meaning);
+            if (onAnswerTyped) {
+              onAnswerTyped(correct);
+            } else {
+              onAnswer(correct);
+            }
+          }}
         />
+      </div>
+    );
+  }
+
+  if (showFallback) {
+    return (
+      <div className="grid gap-5 place-items-center py-6 text-center">
+        <div className="h-16 w-16 grid place-items-center rounded-full bg-amber-50 text-amber-500 mb-2">
+          <Mic className="h-8 w-8 animate-bounce" />
+        </div>
+        <h2 className="text-xl font-extrabold text-slate-800">We couldn't hear you</h2>
+        <p className="text-sm font-semibold text-slate-400 max-w-xs">
+          Make sure your microphone is enabled and you're speaking clearly.
+        </p>
+        
+        <div className="flex flex-col gap-3 w-full max-w-xs mt-4">
+          <Button 
+            className="w-full bg-[#58CC02] hover:bg-[#46A302] text-white font-extrabold rounded-xl py-3.5 transition"
+            onClick={() => {
+              setShowFallback(false);
+              setRecording(false);
+              setTimeout(() => {
+                start();
+              }, 50);
+            }}
+          >
+            Try speaking again
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="w-full font-extrabold rounded-xl py-3.5 border-slate-200 text-slate-500 hover:bg-slate-50 transition"
+            onClick={() => {
+              setTypeInstead(true);
+            }}
+          >
+            Type instead
+          </Button>
+        </div>
       </div>
     );
   }

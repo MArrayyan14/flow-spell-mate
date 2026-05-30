@@ -47,7 +47,7 @@ export function filterByTopic(
 ): ReturnType<typeof enrichConcepts> {
   if (topic === "All") return concepts;
   if (topic === "Forgotten") {
-    return concepts.filter(c => c.recall < 0.4 && (c.memory?.attempts ?? 0) > 0);
+    return concepts.filter(c => c.status === "forgotten");
   }
   return concepts.filter(c => c.topic === topic);
 }
@@ -85,9 +85,9 @@ export function sortVocabulary(
  */
 export function getVocabularyStats(concepts: ReturnType<typeof enrichConcepts>) {
   const learned = concepts.filter(c => (c.memory?.attempts ?? 0) > 0);
-  const dueForReview = learned.filter(c => c.recall < 0.6);
-  const strong = learned.filter(c => c.recall >= 0.9);
-  const forgotten = learned.filter(c => c.recall < 0.4);
+  const dueForReview = learned.filter(c => c.status === "fading" || c.status === "weak");
+  const strong = learned.filter(c => c.status === "strong");
+  const forgotten = learned.filter(c => c.status === "forgotten");
   
   return {
     total: concepts.length,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Sparkles, Hand, Hash, UtensilsCrossed, Users, Clock, Plane, ShoppingBag,
-  Briefcase, ShieldAlert, BookOpen as BookIcon, Play, Flame,
+  Briefcase, ShieldAlert, BookOpen as BookIcon, Play, Flame, Trophy, Lock,
 } from "lucide-react";
 import { PageTopBar, LoadingGrid, ErrorState } from "@/components/lingua/AppShell";
 import { StrengthBar } from "@/components/lingua/StrengthBar";
@@ -201,6 +201,70 @@ export default function Home() {
               </Link>
             );
           })}
+        </section>
+
+        {/* Grand Quiz Section */}
+        <div className="my-8 h-px" style={{ backgroundColor: "#E2E8F0" }} />
+        
+        <section className="mb-8">
+          <h2 className="mb-3" style={{ fontSize: 13, fontWeight: 700, color: "#64748B", letterSpacing: 0.6, textTransform: "uppercase" }}>
+            Grand Quiz
+          </h2>
+          
+          {wordsLearned > 0 ? (
+            <div 
+              className="rounded-3xl p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              style={{
+                background: "linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #4338CA 100%)",
+                boxShadow: "0 10px 25px -5px rgba(79, 70, 229, 0.4)",
+              }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white/10 backdrop-blur-md text-yellow-300">
+                    <Trophy size={28} className="animate-pulse" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                      Grand Quiz <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold">Adaptive</span>
+                    </h3>
+                    <p className="text-indigo-100 text-sm mt-1">
+                      A test based on the words you've learned.
+                    </p>
+                    <p className="text-indigo-200 text-xs mt-2 font-medium">
+                      Vocabulary pool: <span className="text-white font-bold">{wordsLearned}</span> learned words
+                    </p>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => navigate("/grand-quiz")}
+                  className="rounded-xl bg-white px-5 py-3 text-sm font-extrabold text-indigo-600 shadow-md transition-all active:scale-[0.98] hover:bg-indigo-50 shrink-0"
+                >
+                  Start Quiz
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-slate-500">
+              <div className="flex items-start gap-4">
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-400">
+                  <Lock size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-700 flex items-center gap-1.5">
+                    Grand Quiz
+                  </h3>
+                  <p className="text-slate-500 text-sm mt-0.5">
+                    A test based on the words you've learned.
+                  </p>
+                  <p className="text-slate-400 text-xs mt-2 font-semibold">
+                    🔒 Learn at least 1 word from unit lessons to unlock!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </main>

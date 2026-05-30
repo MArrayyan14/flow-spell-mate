@@ -18,7 +18,7 @@ export function RootRedirect() {
 export function BottomNav() {
   const { user } = useAuthStore();
   const location = useLocation();
-  if (!user || location.pathname === "/login" || location.pathname.startsWith("/lesson")) return null;
+  if (!user || location.pathname === "/login" || location.pathname.startsWith("/lesson") || location.pathname.startsWith("/grand-quiz")) return null;
   const items = [
     { to: "/home", label: "Home", icon: Home },
     { to: "/vocabulary", label: "Vocabulary", icon: BookOpen },
@@ -72,7 +72,7 @@ export function PageTopBar() {
     { to: "/vocabulary", label: "Vocabulary", icon: BookOpen },
     { to: "/profile", label: "Profile", icon: UserRound },
   ];
-  const showNav = !!user && location.pathname !== "/login" && !location.pathname.startsWith("/lesson");
+  const showNav = !!user && location.pathname !== "/login" && !location.pathname.startsWith("/lesson") && !location.pathname.startsWith("/grand-quiz");
   return (
     <header
       className="-mx-4 mb-5 flex items-center justify-between gap-6 bg-white px-4 py-3 md:-mx-6 md:px-6"

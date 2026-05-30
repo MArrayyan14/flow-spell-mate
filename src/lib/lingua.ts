@@ -29,7 +29,7 @@ export function enrichConcepts(concepts: Concept[], memories: Memory[] = []): Co
     const recall = memory ? computeRecallProb(memory.half_life_est, memory.last_practiced ? new Date(memory.last_practiced) : null) : 0;
     const attempts = memory?.attempts ?? 0;
     const half = memory?.half_life_est ?? computeHalfLife(0, 0, 0, concept.difficulty_level, concept.base_weight);
-    return { ...concept, memory, recall, status: getStatus(attempts, recall), daysUntilReview: getDaysUntilThreshold(half, memory?.last_practiced ? new Date(memory.last_practiced) : null) };
+    return { ...concept, memory, recall, status: getStatus(attempts, recall, half), daysUntilReview: getDaysUntilThreshold(half, memory?.last_practiced ? new Date(memory.last_practiced) : null) };
   });
 }
 

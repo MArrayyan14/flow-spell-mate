@@ -4,9 +4,11 @@ type Props = {
   prompt: string;
   onSubmit: (value: string) => void;
   disabled?: boolean;
+  label?: string;
+  placeholder?: string;
 };
 
-export default function TranslationInput({ prompt, onSubmit, disabled }: Props) {
+export default function TranslationInput({ prompt, onSubmit, disabled, label, placeholder }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -22,7 +24,7 @@ export default function TranslationInput({ prompt, onSubmit, disabled }: Props) 
   return (
     <div className="grid gap-5">
       <h2 className="text-center" style={{ fontSize: 18, fontWeight: 600, color: "#1A1A1A" }}>
-        Translate: <span style={{ fontWeight: 800 }}>{prompt}</span>
+        {label || "Translate this to Spanish:"} <span style={{ fontWeight: 800 }}>{prompt}</span>
       </h2>
       <div className="flex items-stretch gap-2">
         <input
@@ -32,7 +34,7 @@ export default function TranslationInput({ prompt, onSubmit, disabled }: Props) 
           onKeyDown={(e) => {
             if (e.key === "Enter") submit();
           }}
-          placeholder="Type the Spanish word"
+          placeholder={placeholder || "Type the Spanish word"}
           className="lif-input flex-1 text-base"
           style={{ height: 52 }}
         />

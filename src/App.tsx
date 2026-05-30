@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Profile from "./pages/Profile";
 import UnitPreview from "./pages/UnitPreview";
 import Vocabulary from "./pages/Vocabulary";
+import GrandQuiz from "./pages/GrandQuiz";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const AppContent = () => {
           <Route path="/lesson/:id" element={<Lesson />} />
           <Route path="/vocabulary" element={<Vocabulary />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/grand-quiz" element={<GrandQuiz />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
