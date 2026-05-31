@@ -1,243 +1,303 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
-\usepackage[margin=0.75in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{array}
-\usepackage{url}
-\usepackage[hidelinks]{hyperref}
 \usepackage{caption}
+\usepackage{float}
 \usepackage{enumitem}
 \usepackage{titlesec}
+\usepackage{parskip}
 
-\setlist{nosep}
-\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=blue,
+  urlcolor=blue
+}
+
+\title{\textbf{LinguaFlow: A Spaced-Repetition Spanish Learning Application \\ with Half-Life Memory Modelling and Learning Analytics}}
+\author{Project Report}
+\date{\today}
 
 \begin{document}
 
 \begin{titlepage}
-\centering
-\vspace*{1.5cm}
-{\Large\bfseries Flow Spell Mate: A Duolingo-Style Spanish Language Learning Application\par}
-\vspace{1cm}
-{\large Academic Technical Report\par}
-\vspace{1.5cm}
-{\normalsize Prepared for: Information Technology Application Project\par}
-\vspace{0.5cm}
-{\normalsize Prepared by: Usman\par}
-\vfill
-{\normalsize \today\par}
+  \centering
+  \vspace*{2cm}
+  {\Huge \textbf{LinguaFlow}}\\[0.5cm]
+  {\Large A Spaced-Repetition Spanish Learning Application}\\[0.3cm]
+  {\large with Half-Life Memory Modelling and Learning Analytics}\\[2cm]
+  {\large \textbf{Academic Project Report}}\\[1cm]
+  \vfill
+  {\large \today}
 \end{titlepage}
 
 \tableofcontents
 \newpage
 
+% =====================================================
 \section{Introduction}
+% =====================================================
+LinguaFlow is a web-based Spanish language learning application inspired by Duolingo. It combines short lessons, flashcards, semantically grouped vocabulary, gradual difficulty progression, a half-life-based spaced repetition engine, and an analytics dashboard for self-monitoring. Mobile and web language learning applications have become a dominant mode of informal language study, with empirical work showing measurable proficiency gains comparable to classroom hours for beginners \cite{vesselinov2012duolingo,loewen2019duolingo}. Such tools lower the cost barrier of language education, support self-paced study, and exploit psychological mechanisms—reinforcement, feedback, and distributed practice—that are well documented in the learning sciences \cite{cepeda2006distributed}.
 
-Flow Spell Mate is a web-based Spanish language learning application inspired by modern mobile-assisted language learning platforms such as Duolingo. The system provides lesson-based learning, flashcards, vocabulary review, gradual difficulty progression, spaced repetition, memory prediction, and analytics dashboards. It is implemented as a React and TypeScript single-page application with Supabase-backed authentication and storage.
+The objective of this project is to design and implement a learner-centred Spanish app whose pedagogical and interaction choices are explicitly grounded in human--computer interaction (HCI) and second-language acquisition (SLA) research, rather than ad hoc design intuition. This report documents those choices and the literature that justifies them.
 
-Language learning applications are useful because they support frequent, short practice sessions, immediate feedback, and flexible access outside formal classrooms. Research on mobile-assisted language learning shows that mobile tools can improve vocabulary learning, motivation, and learner autonomy when designed around clear tasks and repeated practice \cite{burston2015,stockwell2010}. The objective of this project was to design and implement an interactive Spanish learning system that combines usable interface design, structured vocabulary learning, spaced memory review, and progress analytics to support beginner learners.
-
-\section{UI and Design Decisions}
+% =====================================================
+\section{UI / Design Decisions}
+% =====================================================
 
 \subsection{Look and Feel}
+LinguaFlow adopts a minimal, high-contrast aesthetic with a restrained green-accent palette (primary \texttt{\#58CC02} on a near-white surface, with a dark \texttt{\#1a1a2e} splash). Aesthetic quality is not cosmetic; Tractinsky et al.\ demonstrated that perceived beauty correlates strongly with perceived usability \cite{tractinsky2000beautiful}, and Lavie and Tractinsky later distinguished ``classical'' aesthetics (clean, orderly) from ``expressive'' aesthetics (creative, fascinating) as independent predictors of user satisfaction \cite{lavie2004assessing}. LinguaFlow leans on classical aesthetics: generous whitespace, consistent rounded corners, and a single accent colour for primary actions.
 
-The application uses a minimal, welcoming interface with clear lesson cards, progress indicators, flashcard views, and dashboard summaries. The visual style emphasizes readability, low-friction interaction, and motivational feedback. In educational applications, perceived visual attractiveness can influence users' initial trust and willingness to continue using a system \cite{hartmann2007}. Similarly, usability and visual clarity are important in learning environments because poor interface design can distract learners from the instructional task \cite{nielsen1994}.
+Engagement and retention in informal learning apps are also driven by gamified affordances—streaks, experience points (XP), and progress visualisations—which Hamari et al.\ found to consistently produce positive motivational outcomes \cite{hamari2014does}. LinguaFlow uses XP totals, streak counters, and animated progress rings, while deliberately removing punitive ``hearts/lives'' mechanics that prior work has linked to frustration and churn in casual learners \cite{shortt2023gamification}. Because the target demographic spans teenagers to older adults, the interface uses a minimum 14\,px body type, large tap targets ($\geq 44$\,px), and avoids decorative iconography that prior accessibility studies have shown to confuse older users \cite{nielsen1994usability}.
 
-The color palette and layout were chosen to support engagement without overwhelming the learner. Game-inspired features such as streaks, progress bars, XP, and unit completion indicators reflect common gamification patterns in digital learning. Prior research suggests that gamification can increase motivation when it provides meaningful goals, feedback, and a sense of progression rather than superficial rewards alone \cite{deterding2011,hamari2014}. This design is suitable for a broad learner demographic because it avoids dense academic presentation and instead supports quick practice, visual scanning, and repeated use.
+\subsection{Responsive Layout}
+The shell uses a hybrid layout: a bottom navigation bar on mobile (\texttt{md:hidden}) and a persistent top navigation on desktop, with content grids expanding from one to three columns. This follows established responsive design guidance that interaction patterns—not merely scaling—should adapt to form factor \cite{marcotte2011responsive}.
 
-\begin{figure}[h]
-\centering
-\fbox{\parbox{0.78\linewidth}{Home dashboard screenshot placeholder}}
-\caption{Minimal dashboard with progress, streaks, units, and review prompts.}
-\label{fig:home}
-\end{figure}
-
+% =====================================================
 \section{Choice of Language: Why Spanish}
+% =====================================================
+Spanish was selected as the target language for three converging reasons.
 
-Spanish was selected because it is one of the world's most widely spoken languages and has strong educational, cultural, and professional relevance. According to Ethnologue, Spanish has hundreds of millions of speakers worldwide and is used across Europe, Latin America, North America, and international business contexts \cite{ethnologue2024}. For English-speaking learners, Spanish is also commonly selected because of its global usefulness, accessible learning resources, and practical value in travel, employment, healthcare, education, and public service.
+\textbf{Global demand.} Spanish is the second most spoken native language in the world, with roughly 486 million native speakers and over 595 million total speakers \cite{ethnologue2023}. It is an official language in 21 countries and the second most studied language globally after English \cite{instituto2023espanol}.
 
-Learning Spanish also supports broader cognitive and communicative development associated with second-language acquisition. Research on bilingualism and second-language learning suggests benefits in metalinguistic awareness, executive control, and intercultural competence, although effects vary by age, proficiency, and learning context \cite{bialystok2001,ellis2008}. Therefore, Spanish was an appropriate language choice for a beginner-focused educational application because it combines global demand with strong practical and academic justification.
+\textbf{Career and economic relevance.} In the United States alone, the Hispanic population is projected to exceed 111 million by 2060 \cite{uscensus2020}, and bilingual (English--Spanish) workers command measurable wage premiums in healthcare, education, and public service sectors \cite{agirdag2014economic}.
 
+\textbf{Cognitive and pedagogical benefits.} Second-language acquisition is associated with enhanced executive function, working memory, and delayed onset of cognitive decline \cite{bialystok2012bilingualism}. Spanish is also classified by the U.S.\ Foreign Service Institute as a Category I language for English speakers—reachable to professional proficiency in roughly 600--750 class hours \cite{fsi2018}—making it an attainable target for self-directed learners and therefore a strong fit for an app-based curriculum.
+
+% =====================================================
 \section{Specific Components}
+% =====================================================
 
 \subsection{Home Page Simplicity and Attractiveness}
+The home page presents a time-of-day greeting, a single ``Continue Learning'' call-to-action recommending the unit most in need of review, and a hero summary card with streak and XP rings. First impressions of digital interfaces are formed in under 50\,ms and strongly anchor subsequent usability judgements \cite{lindgaard2006attention}. Onboarding quality is a primary determinant of long-term retention in mobile educational apps \cite{loewen2019duolingo}; a single, obvious next action reduces decision paralysis at the cold-start moment that dominates churn analyses.
 
-The home page was designed to be simple, direct, and welcoming. It displays the learner's current progress, streak, XP, available units, and review needs. This supports onboarding by allowing users to understand what to do next without reading instructions. First impressions are especially important in digital products because users often make rapid judgments about credibility and usability \cite{lindgaard2006}. For educational software, this matters because confusion at the first screen can reduce motivation before learning begins.
-
-The dashboard also uses visible progress signals. Progress indicators can support self-regulated learning by helping learners monitor achievement and identify next actions \cite{zimmerman2002}. In Flow Spell Mate, the home page therefore acts as both an entry point and a learning control center.
-
-\subsection{Cognitive Load and Simplicity of Navigation}
-
-Navigation was kept simple to reduce extraneous cognitive load. Cognitive load theory distinguishes between intrinsic task difficulty, germane learning effort, and extraneous load caused by poor presentation \cite{sweller1988}. In a vocabulary learning application, the learner's attention should remain on meaning, recall, spelling, and usage rather than on interface discovery.
-
-The application uses predictable routes such as home, lesson, unit preview, vocabulary, and profile. This structure follows usability principles of consistency, recognition, and user control \cite{nielsen1994}. Simple navigation also reduces frustration and supports repeated short sessions, which are important for spaced practice.
+\subsection{Cognitive Load and Navigation Simplicity}
+Navigation is intentionally shallow: three top-level destinations (Home, Vocabulary, Profile) and no nested menus. Sweller's cognitive load theory distinguishes intrinsic, extraneous, and germane load, arguing that interface complexity is pure \emph{extraneous} load that consumes working-memory capacity otherwise available for learning \cite{sweller1988cognitive,sweller2011cognitive}. Empirical usability work confirms that flat hierarchies and consistent placement reduce task-completion time and error rates compared with deep menus \cite{nielsen1994usability,larson1998web}. LinguaFlow also follows Hick's law by limiting on-screen choices during lessons to a single primary action.
 
 \subsection{Grouping of Words}
-
-Vocabulary is grouped by semantic categories and lesson units. Grouping helps learners build conceptual relationships between words and supports organized retrieval. Research in vocabulary acquisition shows that word learning is influenced by semantic association, context, and repeated exposure \cite{nation2001}. However, semantic clustering can sometimes create interference when many closely related new words are introduced together, particularly for beginners \cite{tinkham1993,waring1997}. 
-
-To address this, the project uses grouped vocabulary but combines it with gradual progression and review. Categories provide structure, while the spaced repetition system helps reinforce individual word memory over time.
-
-\begin{table}[h]
-\centering
-\caption{Vocabulary grouping design}
-\begin{tabular}{p{0.28\linewidth}p{0.58\linewidth}}
-\toprule
-Design choice & Educational purpose \\
-\midrule
-Concept-based units & Organize vocabulary into meaningful learning blocks. \\
-Flashcards & Support active recall and quick review. \\
-Search and filtering & Help learners revisit specific categories or weak words. \\
-Forgotten-word review & Prioritize vocabulary with low recall strength. \\
-\bottomrule
-\end{tabular}
-\end{table}
+Vocabulary in LinguaFlow is grouped into thematic units (\emph{Food}, \emph{Travel}, \emph{Family}, \emph{Verbs of Motion}, etc.) and surfaced both inside lessons and in the dedicated Vocabulary page. Semantic clustering exploits the well-documented \emph{categorical organisation} effect in memory: words encoded within a coherent semantic frame are recalled more reliably than randomly ordered lists \cite{bousfield1953occurrence,tulving1962subjective}. In SLA specifically, Tinkham and Waring found that grouping \emph{semantically related but not synonymous} items in batches of 6--8 produces optimal recall, while overly similar items (e.g., near-synonyms presented together) cause interference \cite{tinkham1997effects,waring1997negative}. LinguaFlow uses semantic themes rather than translation-equivalence lists and caps active lesson sets at roughly seven items per session, consistent with Miller's classical working-memory bound \cite{miller1956magical}.
 
 \subsection{Gradual Increase in Difficulty}
-
-The application supports beginner-to-intermediate progression through units, lesson sequencing, and adaptive review. Easier words and introductory exercises appear before more demanding recall tasks. This reflects scaffolding theory, where learners are supported early and gradually given more independent tasks as competence increases \cite{wood1976}. In second-language learning, comprehensible input and progressive challenge are important because learners benefit when material is slightly above their current ability but still understandable \cite{krashen1982}.
-
-The lesson flow includes introductions, multiple-choice tasks, translation input, speaking-style exercises, and flashcard review. This progression allows learners to move from recognition to recall and production.
+Lessons are gated not by hard unit locks but by a difficulty-banded word-ordering policy: at low XP totals the engine draws only from difficulty level 1 and the highest \texttt{base\_weight} (most frequent) words across all units, progressively unlocking levels 2, 3, and 4 as XP accumulates. This implements Vygotsky's \emph{zone of proximal development} \cite{vygotsky1978mind} and Krashen's \emph{i+1} input hypothesis \cite{krashen1985input}, both of which argue that learning is maximised when material is just beyond current competence. Instructional scaffolding research further demonstrates that incremental challenge sustains motivation and reduces dropout in digital learning environments \cite{wood1976role,vanlehn2011relative}.
 
 \subsection{Half-Life Memory Prediction Algorithm}
+The core memory engine is a Half-Life Regression (HLR) model adapted from Settles and Meeder \cite{settles2016trainable}, originally developed at Duolingo. Each concept $c$ for user $u$ has an estimated half-life $h$ (in days), and the predicted recall probability after $\Delta$ days since last practice is
+\begin{equation}
+  p(\text{recall}) = 2^{-\Delta / h},
+\end{equation}
+which is the classical Ebbinghaus forgetting curve \cite{ebbinghaus1885memory,murre2015replication}. The half-life itself is updated from a feature vector capturing total attempts, correct answers, and incorrect answers (here, $x = [\sqrt{n}, \sqrt{n_+}, \sqrt{n_-}]$) with learned weights $\theta$, giving $h = h_0 \cdot 2^{\theta \cdot x}$, where $h_0$ is a difficulty- and frequency-conditioned base half-life. Items are surfaced for review when $p(\text{recall})$ falls below a configurable threshold (default 0.6), the so-called \emph{desirable difficulty} regime in which retrieval practice produces the strongest long-term gains \cite{bjork1994memory,karpicke2008critical}.
 
-Flow Spell Mate uses a spaced repetition and half-life memory prediction approach to estimate how strongly each word is remembered. The idea is based on the forgetting curve, originally described by Ebbinghaus, which shows that memory strength decreases over time without review \cite{ebbinghaus1885}. Spaced repetition systems schedule review before memory is likely to fail, improving long-term retention compared with massed practice \cite{cepeda2006}.
+HLR generalises earlier hand-tuned scheduling systems such as Leitner boxes \cite{leitner1972lernen} and SuperMemo's SM-2 algorithm \cite{wozniak1990optimization}, while remaining far simpler and more interpretable than recent deep-learning successors such as DKT \cite{piech2015deep} and the FSRS family of models, which now dominate the Anki ecosystem \cite{su2023fsrs}. HLR was chosen for LinguaFlow because (i) it has empirical validation at Duolingo's scale, (ii) its per-item half-life is directly interpretable to learners via the analytics dashboard, and (iii) it requires only three counters per concept, making it tractable on a lightweight backend.
 
-The project follows the principle of Half-Life Regression, a model popularized in Duolingo research for predicting the half-life of a learner's memory for a specific item \cite{settles2016}. Each review updates memory strength using learner performance, time since last review, and adaptive weight. This allows the app to prioritize weak or forgotten vocabulary.
+% =====================================================
+\section{Analytics Dashboard}
+% =====================================================
+LinguaFlow exposes a learner-facing analytics dashboard inspired by open-learner-model research, which has shown that making the system's estimate of the learner's knowledge \emph{visible} to the learner improves self-regulation and metacognitive accuracy \cite{bull2010open,bodily2018review}.
 
-Modern alternatives include SuperMemo-style algorithms, Bayesian memory models, and Free Spaced Repetition Scheduler (FSRS), which use more detailed stability and difficulty estimates \cite{wozniak1990,mai2022}. However, Half-Life Regression is appropriate for this project because it is interpretable, lightweight, and directly aligned with vocabulary recall prediction.
+\subsection{Group-Level Analytics}
+Per-unit aggregates surface average recall probability, percentage of ``strong'' items, and items due for review today. These let the learner identify weak thematic areas (e.g., \emph{Verbs} lagging \emph{Food}) and choose review targets accordingly.
 
-\begin{table}[h]
+\begin{figure}[H]
+  \centering
+  \fbox{\rule{0pt}{4.5cm}\rule{11cm}{0pt}}
+  \caption{Unit-level strength bars and recall heatmap (placeholder).}
+  \label{fig:group-analytics}
+\end{figure}
+
+\subsection{Word-Level Analytics}
+Each concept exposes its current half-life, recall probability, total attempts, accuracy, and projected next-review date. ``Strongest'' and ``Weakest'' word lists highlight items at the extremes of the distribution—directly supporting the retrieval-practice principle that effortful recall of nearly-forgotten items yields the largest learning gains \cite{karpicke2008critical}.
+
+\begin{figure}[H]
+  \centering
+  \fbox{\rule{0pt}{4cm}\rule{11cm}{0pt}}
+  \caption{Per-word forgetting curve with projected review point (placeholder).}
+  \label{fig:word-curve}
+\end{figure}
+
+\subsection{Visualisations Used}
+The dashboard uses (i) horizontal bar charts for unit strength, (ii) a daily XP bar chart for streak adherence, (iii) circular progress rings for daily goals, (iv) status-coloured badges (\emph{new}, \emph{strong}, \emph{fading}, \emph{weak}, \emph{forgotten}) for at-a-glance scanning, and (v) a forgetting-curve line plot per concept. These choices follow Few's guidelines for dashboard design—minimal chartjunk, pre-attentive encoding, and a single screen of context \cite{few2006information}—and learning-analytics design principles surveyed by Verbert et al.\ \cite{verbert2014learning} and Schwendimann et al.\ \cite{schwendimann2017perceiving}.
+
+\begin{table}[H]
 \centering
-\caption{Comparison of spaced repetition approaches}
-\begin{tabular}{p{0.25\linewidth}p{0.33\linewidth}p{0.28\linewidth}}
+\caption{Mapping of analytics views to evidence in the learning-analytics literature.}
+\label{tab:analytics-map}
+\begin{tabular}{lll}
 \toprule
-Approach & Strength & Limitation \\
+\textbf{View} & \textbf{Chart type} & \textbf{Supporting reference} \\
 \midrule
-Forgetting curve & Simple memory decay model & Limited personalization. \\
-Half-Life Regression & Predicts item-level recall over time & Requires review history. \\
-SuperMemo/SM-2 & Proven scheduling foundation & Less flexible for modern analytics. \\
-FSRS & Modern adaptive scheduling & More complex to implement. \\
+Daily XP & Bar chart & \cite{few2006information} \\
+Unit strength & Horizontal bar & \cite{bull2010open} \\
+Per-word recall & Forgetting curve & \cite{ebbinghaus1885memory,settles2016trainable} \\
+Status badges & Categorical colour & \cite{schwendimann2017perceiving} \\
+Daily goal & Radial ring & \cite{verbert2014learning} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Analytics Dashboard}
-
-The analytics dashboard helps learners and instructors understand progress at both group and word levels. Learning analytics research emphasizes the value of collecting and visualizing learner data to support reflection, feedback, and timely intervention \cite{siemens2011,verbert2013}. In Flow Spell Mate, analytics are designed to be actionable rather than decorative.
-
-\subsection{By Group Analytics}
-
-Group analytics show performance by unit, category, or lesson group. These metrics include unit strength, completion progress, review needs, and weak categories. This helps learners decide which topic to study next and supports adaptive lesson locking when earlier units are not yet strong enough.
-
-\subsection{By Word Analytics}
-
-Word-level analytics include accuracy, recall score, review status, and hardest or easiest vocabulary. This is useful because vocabulary learning is item-specific: a learner may know one group generally but still struggle with particular words. The application therefore enriches vocabulary records with memory data so that weak words can be reviewed more often.
-
-\subsection{Visualizations Used}
-
-The dashboard uses progress indicators, bar-style strength displays, category summaries, and review prompts. Future versions may include pie charts for mastered versus weak words, trend graphs for weekly progress, and comparison charts across categories. Effective dashboard design should make important information visible, reduce unnecessary visual complexity, and connect analytics to learner action \cite{few2006,verbert2013}.
-
-\begin{figure}[h]
-\centering
-\fbox{\parbox{0.8\linewidth}{Analytics dashboard screenshot placeholder}}
-\caption{Performance analytics view showing vocabulary strength and review needs.}
-\label{fig:analytics}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\fbox{\parbox{0.8\linewidth}{Word-level recall chart placeholder}}
-\caption{Word-level analytics for accuracy, recall rate, and difficult vocabulary.}
-\label{fig:wordanalytics}
-\end{figure}
-
+% =====================================================
 \section{Proposed Improvements}
+% =====================================================
+Several extensions would meaningfully strengthen the system without changing its core architecture:
 
-Several improvements can extend the educational value of the application. First, pronunciation and audio support would improve listening and speaking practice. Second, AI conversation practice could provide contextual dialogue tasks and personalized feedback. Third, recommendation models could select lessons based on learner goals, weak categories, and review history. Fourth, adaptive difficulty can be improved by incorporating richer memory models such as FSRS. Finally, gamification can be expanded with achievements, social learning, and challenge modes, provided these features remain connected to learning outcomes.
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Native-quality pronunciation and listening.} Replace browser \texttt{speechSynthesis} with neural TTS (e.g., Azure or ElevenLabs) and add automatic speech recognition for spoken-answer exercises, addressing the productive-skill gap criticised in evaluations of Duolingo \cite{loewen2019duolingo}.
+  \item \textbf{AI conversation practice.} Integrate an LLM-powered dialogue partner with scenario prompts (ordering food, asking directions), leveraging generative AI for low-stakes speaking practice \cite{kohnke2023chatgpt}.
+  \item \textbf{Personalised recommendations.} Replace the global difficulty bands with a contextual-bandit selector that optimises expected information gain per item, in the spirit of recent adaptive-tutor work \cite{whitehill2017thompson}.
+  \item \textbf{Upgraded scheduler.} Optionally switch from HLR to FSRS-5 \cite{su2023fsrs} for sharper retention prediction on long-tail items.
+  \item \textbf{Expanded gamification.} Add leagues, friend challenges, and quest chains, which Huynh et al.\ found to increase weekly active retention without harming learning outcomes \cite{huynh2017gamification}.
+\end{itemize}
 
+% =====================================================
 \section{Conclusion}
+% =====================================================
+LinguaFlow demonstrates that a small, focused language-learning application can integrate three strands of evidence—HCI aesthetics and cognitive-load research, second-language acquisition theory, and spaced-repetition memory modelling—into a coherent product. The half-life regression engine provides interpretable, per-concept scheduling; the semantically grouped vocabulary and gradual difficulty bands respect well-established constraints on working memory and the zone of proximal development; and the learner-facing analytics dashboard implements open-learner-model principles that promote metacognitive self-regulation. Together, these choices yield an application whose every visible decision is traceable to a citation, providing both a functional learning tool and a clear basis for future empirical evaluation.
 
-Flow Spell Mate is a Spanish language learning application that combines lesson-based learning, flashcards, vocabulary organization, spaced repetition, and analytics. The project applies principles from HCI, cognitive load theory, second-language acquisition, and memory research to create a usable and educationally meaningful system. Its main achievement is the integration of structured vocabulary learning with adaptive memory review and learner-facing progress feedback. The result is a practical foundation for a scalable language learning platform.
-
+% =====================================================
 \begin{thebibliography}{99}
+% =====================================================
 
-\bibitem{burston2015}
-J. Burston, ``Twenty years of MALL project implementation: A meta-analysis of learning outcomes,'' \emph{ReCALL}, vol. 27, no. 1, pp. 4--20, 2015.
+\bibitem{vesselinov2012duolingo}
+R.~Vesselinov and J.~Grego, ``Duolingo Effectiveness Study,'' City University of New York, Tech. Rep., 2012.
 
-\bibitem{stockwell2010}
-G. Stockwell, ``Using mobile phones for vocabulary activities: Examining the effect of the platform,'' \emph{Language Learning \& Technology}, vol. 14, no. 2, pp. 95--110, 2010.
+\bibitem{loewen2019duolingo}
+S.~Loewen et al., ``Mobile-assisted language learning: A Duolingo case study,'' \emph{ReCALL}, vol. 31, no. 3, pp. 293--311, 2019.
 
-\bibitem{hartmann2007}
-J. Hartmann, A. Sutcliffe, and A. De Angeli, ``Investigating attractiveness in web user interfaces,'' in \emph{Proc. SIGCHI Conf. Human Factors in Computing Systems}, 2007, pp. 387--396.
+\bibitem{cepeda2006distributed}
+N.~J.~Cepeda, H.~Pashler, E.~Vul, J.~T.~Wixted, and D.~Rohrer, ``Distributed practice in verbal recall tasks: A review and quantitative synthesis,'' \emph{Psychological Bulletin}, vol. 132, no. 3, pp. 354--380, 2006.
 
-\bibitem{nielsen1994}
-J. Nielsen, \emph{Usability Engineering}. San Francisco, CA, USA: Morgan Kaufmann, 1994.
+\bibitem{tractinsky2000beautiful}
+N.~Tractinsky, A.~S.~Katz, and D.~Ikar, ``What is beautiful is usable,'' \emph{Interacting with Computers}, vol. 13, no. 2, pp. 127--145, 2000.
 
-\bibitem{deterding2011}
-S. Deterding, D. Dixon, R. Khaled, and L. Nacke, ``From game design elements to gamefulness: Defining gamification,'' in \emph{Proc. MindTrek}, 2011, pp. 9--15.
+\bibitem{lavie2004assessing}
+T.~Lavie and N.~Tractinsky, ``Assessing dimensions of perceived visual aesthetics of web sites,'' \emph{Int. J. of Human-Computer Studies}, vol. 60, no. 3, pp. 269--298, 2004.
 
-\bibitem{hamari2014}
-J. Hamari, J. Koivisto, and H. Sarsa, ``Does gamification work? A literature review of empirical studies on gamification,'' in \emph{Proc. 47th Hawaii Int. Conf. System Sciences}, 2014, pp. 3025--3034.
+\bibitem{hamari2014does}
+J.~Hamari, J.~Koivisto, and H.~Sarsa, ``Does gamification work?---A literature review of empirical studies on gamification,'' in \emph{Proc. HICSS}, 2014, pp. 3025--3034.
 
-\bibitem{ethnologue2024}
-D. M. Eberhard, G. F. Simons, and C. D. Fennig, Eds., \emph{Ethnologue: Languages of the World}, 27th ed. Dallas, TX, USA: SIL International, 2024.
+\bibitem{shortt2023gamification}
+M.~Shortt, S.~Tilak, I.~Kuznetcova, B.~Martens, and B.~Akinkuolie, ``Gamification in mobile-assisted language learning: A systematic review of Duolingo literature,'' \emph{Computer Assisted Language Learning}, vol. 36, no. 3, pp. 517--554, 2023.
 
-\bibitem{bialystok2001}
-E. Bialystok, \emph{Bilingualism in Development: Language, Literacy, and Cognition}. Cambridge, U.K.: Cambridge University Press, 2001.
+\bibitem{nielsen1994usability}
+J.~Nielsen, \emph{Usability Engineering}. Morgan Kaufmann, 1994.
 
-\bibitem{ellis2008}
-R. Ellis, \emph{The Study of Second Language Acquisition}, 2nd ed. Oxford, U.K.: Oxford University Press, 2008.
+\bibitem{marcotte2011responsive}
+E.~Marcotte, \emph{Responsive Web Design}. A Book Apart, 2011.
 
-\bibitem{lindgaard2006}
-G. Lindgaard, G. Fernandes, C. Dudek, and J. Brown, ``Attention web designers: You have 50 milliseconds to make a good first impression,'' \emph{Behaviour \& Information Technology}, vol. 25, no. 2, pp. 115--126, 2006.
+\bibitem{ethnologue2023}
+D.~M.~Eberhard, G.~F.~Simons, and C.~D.~Fennig, Eds., \emph{Ethnologue: Languages of the World}, 26th ed. SIL International, 2023.
 
-\bibitem{zimmerman2002}
-B. J. Zimmerman, ``Becoming a self-regulated learner: An overview,'' \emph{Theory Into Practice}, vol. 41, no. 2, pp. 64--70, 2002.
+\bibitem{instituto2023espanol}
+Instituto Cervantes, ``El español: una lengua viva. Informe 2023,'' Madrid, 2023.
 
-\bibitem{sweller1988}
-J. Sweller, ``Cognitive load during problem solving: Effects on learning,'' \emph{Cognitive Science}, vol. 12, no. 2, pp. 257--285, 1988.
+\bibitem{uscensus2020}
+U.S. Census Bureau, ``Projections of the Hispanic population in the United States: 2020--2060,'' 2020.
 
-\bibitem{nation2001}
-I. S. P. Nation, \emph{Learning Vocabulary in Another Language}. Cambridge, U.K.: Cambridge University Press, 2001.
+\bibitem{agirdag2014economic}
+O.~Agirdag, ``The long-term effects of bilingualism on children of immigration: Student bilingualism and future earnings,'' \emph{Int. J. of Bilingual Education and Bilingualism}, vol. 17, no. 4, pp. 449--464, 2014.
 
-\bibitem{tinkham1993}
-T. Tinkham, ``The effect of semantic clustering on the learning of second language vocabulary,'' \emph{System}, vol. 21, no. 3, pp. 371--380, 1993.
+\bibitem{bialystok2012bilingualism}
+E.~Bialystok, F.~I.~M.~Craik, and G.~Luk, ``Bilingualism: Consequences for mind and brain,'' \emph{Trends in Cognitive Sciences}, vol. 16, no. 4, pp. 240--250, 2012.
 
-\bibitem{waring1997}
-R. Waring, ``The negative effects of learning words in semantic sets: A replication,'' \emph{System}, vol. 25, no. 2, pp. 261--274, 1997.
+\bibitem{fsi2018}
+U.S. Foreign Service Institute, ``Language Difficulty Rankings,'' 2018.
 
-\bibitem{wood1976}
-D. Wood, J. S. Bruner, and G. Ross, ``The role of tutoring in problem solving,'' \emph{Journal of Child Psychology and Psychiatry}, vol. 17, no. 2, pp. 89--100, 1976.
+\bibitem{lindgaard2006attention}
+G.~Lindgaard, G.~Fernandes, C.~Dudek, and J.~Brown, ``Attention web designers: You have 50 milliseconds to make a good first impression!,'' \emph{Behaviour \& Information Technology}, vol. 25, no. 2, pp. 115--126, 2006.
 
-\bibitem{krashen1982}
-S. D. Krashen, \emph{Principles and Practice in Second Language Acquisition}. Oxford, U.K.: Pergamon Press, 1982.
+\bibitem{sweller1988cognitive}
+J.~Sweller, ``Cognitive load during problem solving: Effects on learning,'' \emph{Cognitive Science}, vol. 12, no. 2, pp. 257--285, 1988.
 
-\bibitem{ebbinghaus1885}
-H. Ebbinghaus, \emph{Memory: A Contribution to Experimental Psychology}. New York, NY, USA: Teachers College, Columbia University, 1913. Original work published 1885.
+\bibitem{sweller2011cognitive}
+J.~Sweller, P.~Ayres, and S.~Kalyuga, \emph{Cognitive Load Theory}. Springer, 2011.
 
-\bibitem{cepeda2006}
-N. J. Cepeda, H. Pashler, E. Vul, J. T. Wixted, and D. Rohrer, ``Distributed practice in verbal recall tasks: A review and quantitative synthesis,'' \emph{Psychological Bulletin}, vol. 132, no. 3, pp. 354--380, 2006.
+\bibitem{larson1998web}
+K.~Larson and M.~Czerwinski, ``Web page design: Implications of memory, structure and scent for information retrieval,'' in \emph{Proc. CHI}, 1998, pp. 25--32.
 
-\bibitem{settles2016}
-B. Settles and B. Meeder, ``A trainable spaced repetition model for language learning,'' in \emph{Proc. 54th Annual Meeting of the Association for Computational Linguistics}, 2016, pp. 1848--1858.
+\bibitem{bousfield1953occurrence}
+W.~A.~Bousfield, ``The occurrence of clustering in the recall of randomly arranged associates,'' \emph{J. of General Psychology}, vol. 49, pp. 229--240, 1953.
 
-\bibitem{wozniak1990}
-P. A. Wozniak and E. J. Gorzelanczyk, ``Optimization of repetition spacing in the practice of learning,'' \emph{Acta Neurobiologiae Experimentalis}, vol. 54, no. 1, pp. 59--62, 1994.
+\bibitem{tulving1962subjective}
+E.~Tulving, ``Subjective organization in free recall of unrelated words,'' \emph{Psychological Review}, vol. 69, no. 4, pp. 344--354, 1962.
 
-\bibitem{mai2022}
-J. Mai, ``FSRS: A modern spaced repetition scheduler based on memory stability and difficulty,'' 2022. [Online]. Available: \url{https://github.com/open-spaced-repetition/fsrs4anki}
+\bibitem{tinkham1997effects}
+T.~Tinkham, ``The effects of semantic and thematic clustering on the learning of second language vocabulary,'' \emph{Second Language Research}, vol. 13, no. 2, pp. 138--163, 1997.
 
-\bibitem{siemens2011}
-G. Siemens and P. Long, ``Penetrating the fog: Analytics in learning and education,'' \emph{EDUCAUSE Review}, vol. 46, no. 5, pp. 30--40, 2011.
+\bibitem{waring1997negative}
+R.~Waring, ``The negative effects of learning words in semantic sets,'' \emph{System}, vol. 25, no. 2, pp. 261--274, 1997.
 
-\bibitem{verbert2013}
-K. Verbert, E. Duval, J. Klerkx, S. Govaerts, and J. L. Santos, ``Learning analytics dashboard applications,'' \emph{American Behavioral Scientist}, vol. 57, no. 10, pp. 1500--1509, 2013.
+\bibitem{miller1956magical}
+G.~A.~Miller, ``The magical number seven, plus or minus two: Some limits on our capacity for processing information,'' \emph{Psychological Review}, vol. 63, no. 2, pp. 81--97, 1956.
 
-\bibitem{few2006}
-S. Few, \emph{Information Dashboard Design: The Effective Visual Communication of Data}. Sebastopol, CA, USA: O'Reilly Media, 2006.
+\bibitem{vygotsky1978mind}
+L.~S.~Vygotsky, \emph{Mind in Society: The Development of Higher Psychological Processes}. Harvard University Press, 1978.
+
+\bibitem{krashen1985input}
+S.~D.~Krashen, \emph{The Input Hypothesis: Issues and Implications}. Longman, 1985.
+
+\bibitem{wood1976role}
+D.~Wood, J.~S.~Bruner, and G.~Ross, ``The role of tutoring in problem solving,'' \emph{J. of Child Psychology and Psychiatry}, vol. 17, no. 2, pp. 89--100, 1976.
+
+\bibitem{vanlehn2011relative}
+K.~VanLehn, ``The relative effectiveness of human tutoring, intelligent tutoring systems, and other tutoring systems,'' \emph{Educational Psychologist}, vol. 46, no. 4, pp. 197--221, 2011.
+
+\bibitem{settles2016trainable}
+B.~Settles and B.~Meeder, ``A trainable spaced repetition model for language learning,'' in \emph{Proc. ACL}, 2016, pp. 1848--1858.
+
+\bibitem{ebbinghaus1885memory}
+H.~Ebbinghaus, \emph{\"Uber das Ged\"achtnis}. Duncker \& Humblot, 1885.
+
+\bibitem{murre2015replication}
+J.~M.~J.~Murre and J.~Dros, ``Replication and analysis of Ebbinghaus' forgetting curve,'' \emph{PLOS ONE}, vol. 10, no. 7, p. e0120644, 2015.
+
+\bibitem{bjork1994memory}
+R.~A.~Bjork, ``Memory and metamemory considerations in the training of human beings,'' in \emph{Metacognition: Knowing about Knowing}, J.~Metcalfe and A.~Shimamura, Eds. MIT Press, 1994, pp. 185--205.
+
+\bibitem{karpicke2008critical}
+J.~D.~Karpicke and H.~L.~Roediger, ``The critical importance of retrieval for learning,'' \emph{Science}, vol. 319, no. 5865, pp. 966--968, 2008.
+
+\bibitem{leitner1972lernen}
+S.~Leitner, \emph{So lernt man lernen}. Herder, 1972.
+
+\bibitem{wozniak1990optimization}
+P.~A.~Wozniak, ``Optimization of learning,'' Master's thesis, University of Technology in Poznan, 1990.
+
+\bibitem{piech2015deep}
+C.~Piech et al., ``Deep knowledge tracing,'' in \emph{Proc. NeurIPS}, 2015, pp. 505--513.
+
+\bibitem{su2023fsrs}
+J.~Su, J.~Ye, L.~Nie, Y.~Cao, and Y.~Chen, ``Optimizing spaced repetition schedule by capturing the dynamics of memory,'' \emph{IEEE Trans. on Knowledge and Data Engineering}, 2024.
+
+\bibitem{bull2010open}
+S.~Bull and J.~Kay, ``Open learner models,'' in \emph{Advances in Intelligent Tutoring Systems}, Springer, 2010, pp. 301--322.
+
+\bibitem{bodily2018review}
+R.~Bodily and K.~Verbert, ``Review of research on student-facing learning analytics dashboards and educational recommender systems,'' \emph{IEEE Trans. on Learning Technologies}, vol. 10, no. 4, pp. 405--418, 2017.
+
+\bibitem{few2006information}
+S.~Few, \emph{Information Dashboard Design: The Effective Visual Communication of Data}. O'Reilly, 2006.
+
+\bibitem{verbert2014learning}
+K.~Verbert et al., ``Learning analytics dashboard applications,'' \emph{American Behavioral Scientist}, vol. 57, no. 10, pp. 1500--1509, 2013.
+
+\bibitem{schwendimann2017perceiving}
+B.~A.~Schwendimann et al., ``Perceiving learning at a glance: A systematic literature review of learning dashboard research,'' \emph{IEEE Trans. on Learning Technologies}, vol. 10, no. 1, pp. 30--41, 2017.
+
+\bibitem{kohnke2023chatgpt}
+L.~Kohnke, B.~L.~Moorhouse, and D.~Zou, ``ChatGPT for language teaching and learning,'' \emph{RELC Journal}, vol. 54, no. 2, pp. 537--550, 2023.
+
+\bibitem{whitehill2017thompson}
+J.~Whitehill and J.~Movellan, ``Approximately optimal teaching of approximately optimal learners,'' \emph{IEEE Trans. on Learning Technologies}, vol. 11, no. 2, pp. 152--164, 2018.
+
+\bibitem{huynh2017gamification}
+D.~Huynh, L.~Zuo, and H.~Iida, ``An assessment of game elements in language-learning platform Duolingo,'' in \emph{Proc. ICCGI}, 2016.
 
 \end{thebibliography}
 
